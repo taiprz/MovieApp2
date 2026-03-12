@@ -1,4 +1,3 @@
-import org.gradle.api.internal.DocumentationRegistry.BASE_URL
 import java.util.Properties
 
 plugins {
@@ -20,14 +19,25 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
+        // apikey saved
         val keystoreFile = project.rootProject.file("apikey.properties")
         val properties = Properties()
         properties.load(keystoreFile.inputStream())
         val apiKey = properties.getProperty("API_KEY") ?: ""
 
-        val urlstoreFile = project.rootProject.file("local.properties")
+        // baseUrl saved
+        val urlstoreFile = rootProject.file("local.properties")
+        val properties2 = Properties()
         properties.load(urlstoreFile.inputStream())
-        val baseURL = properties.getProperty("BASE_URL")
+        val baseURL = properties.getProperty("BASE_URL") ?: ""
+
+        // baseimg saveD
+        val imgstoreFile = rootProject.file("local.properties")
+        val properties3 = Properties()
+        properties.load(imgstoreFile.inputStream())
+        val baseImageURL = properties.getProperty("BASE_IMAGE_URL") ?: ""
+
 
         buildConfigField(
             type = "String",
@@ -41,6 +51,11 @@ android {
             value = baseURL
         )
 
+        buildConfigField(
+            type = "String",
+            name = "BASE_IMAGE_URL",
+            value = baseImageURL
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

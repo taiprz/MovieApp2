@@ -13,7 +13,7 @@ interface MovieAPI {
     @GET("movie/{category}")
     suspend fun getMoviesList(
         @Path("category") category: String,
-        @Query("page") page : Int
+        @Query("page") page: Int
     ): MovieListDTO
 
     @GET("movie/{id}")
@@ -21,9 +21,9 @@ interface MovieAPI {
         @Path("id") movieId: Int
     ): MovieDTO
 
-       @GET("search/movie")
-       suspend fun searchByTitle(
-       @Query("query") title: String,
-       @Query("page") page : Int
-        ): MovieListDTO
+    @GET("search/movie")
+    suspend fun searchByTitle(
+        @Query("query") title: String,
+        @Query("page") page: Int
+    ): MovieListDTO
 }

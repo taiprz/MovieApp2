@@ -20,7 +20,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.data.utils.Route
 import com.example.movieapp.ui.theme.DustGrey
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
@@ -52,11 +51,13 @@ fun HomeView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (searchText.isEmpty()) {
-            MovieList(movies = movies, navController = navController, homeViewModel = homeViewModel)
-        } else {
-            MovieList(movies = moviesFound, navController = navController, homeViewModel = homeViewModel)
-        }
+        // TODO: FIX NAVIGATION IMPLEMENTING NAVIGATION 3 
+        
+        //        if (searchText.isEmpty()) {
+//            MovieList(movies = movies, onMovieClick =  )
+//        } else {
+//            MovieList(movies = moviesFound, onMovieClick = )
+//        }
     }
 }
 
@@ -85,8 +86,7 @@ fun SearchBar(
 @Composable
 fun MovieList(
     movies: LazyPagingItems<Movie>,
-    navController: NavHostController,
-    homeViewModel: HomeViewModel
+    onMovieClick: (Movie) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
@@ -95,8 +95,7 @@ fun MovieList(
             movies[index]?.let { movie ->
                 MovieItem(
                     movie = movie,
-                    navHostController = navController,
-                    homeViewModel = homeViewModel
+                    onMovieClick = onMovieClick
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -105,20 +104,22 @@ fun MovieList(
 }
 
 @Composable
-fun MovieItem(movie: Movie,
-             navHostController: NavHostController,
-             homeViewModel: HomeViewModel) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .background(color = DustGrey)
-        .clickable {
-            navHostController.navigate("${Route.Details.route}/${movie.id}")
-        }
-        .padding(8.dp)) {
+fun MovieItem(
+    movie: Movie,
+    onMovieClick: (Movie) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = DustGrey)
+            .clickable {
+                onMovieClick(movie)
+            }
+            .padding(8.dp)) {
 
         AsyncImage(
-            model = homeViewModel.loadPoster(movie) ,
-            contentDescription = "Movie poster",
+            model = movie.posterPath,
+            contentDescription = movie.title,
             modifier = Modifier.size(80.dp)
         )
 

@@ -1,5 +1,6 @@
 package com.example.movieapp.data.utils
 
+import com.example.movieapp.BuildConfig
 import com.example.movieapp.data.dto.MovieDTO
 import com.example.movieapp.entities.MovieEntity
 import com.example.movieapp.domain.model.Movie
@@ -13,22 +14,22 @@ import kotlin.text.split
 // CHANGES: Mapped ReleaseDate format to fit the country
 // Deleted unnecessary mapper (Dto to Entity)
 
-fun mapDates(date: String?): String {
-    if (date.isNullOrEmpty()) return ""
 
-    return try {
+// TODO: fix the image url so its on buildconfig
+private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
+
+fun String?.toDateFormatted(): String {
+    if (this.isNullOrEmpty()) return ""
+
+
         val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val localDate = LocalDate.parse(date, inputFormatter)
+        val localDate = LocalDate.parse(this, inputFormatter)
 
         val outputFormatter = DateTimeFormatter
             .ofPattern("dd MMM yyyy")
             .withLocale(Locale.getDefault())
 
-        localDate.format(outputFormatter)
-    } catch (e: Exception) {
-        // If already formated, return as it is to avoid crashes
-        date
-    }
+    return localDate.format(outputFormatter)
 }
 
 fun MovieEntity.toMovie(
@@ -40,7 +41,7 @@ fun MovieEntity.toMovie(
         originalLanguage = originalLanguage,
         overview = overview,
         posterPath = posterPath,
-        releaseDate = mapDates(releaseDate),
+        releaseDate = releaseDate,
         title = title,
         voteAverage = voteAverage,
         popularity = popularity,
@@ -60,8 +61,8 @@ fun MovieDTO.toMovie(
         backdropPath = backdropPath ?: "",
         originalLanguage = originalLanguage ?: "",
         overview = overview ?: "",
-        posterPath = posterPath ?: "",
-        releaseDate = mapDates(releaseDate),
+        posterPath = (BASE_IMAGE_URL + posterPath),
+        releaseDate = releaseDate ?: "",
         title = title ?: "",
         voteAverage = voteAverage ?: 0.0,
         popularity = popularity ?: 0.0,

@@ -1,6 +1,5 @@
 package com.example.movieapp.ui.details
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,14 +40,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
-import java.time.LocalDate
 
 
 // CHANGES: CHANGED WHERE PARAMETERS ARE RECEIVED TO A SUPERIOR LEVEL
@@ -86,14 +82,12 @@ fun DetailsView(
             MovieDetails(
                 movie = movie,
                 isFavorite = isFavorite,
-                poster = detailsViewModel.loadPoster(movie),
+                poster = movie.posterPath,
                 onBackClick = { navController.popBackStack() },
                 onAddFavorite = { detailsViewModel.addToFavorites(movie)},
                 onRemoveFavorite = {
                     detailsViewModel.removeFavorite(movie)
                 })
-
-            Log.v("Tai", "Favorite button clicked: $isFavorite")
         }
     }
 }

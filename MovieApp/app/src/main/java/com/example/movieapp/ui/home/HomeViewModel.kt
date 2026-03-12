@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.domain.use_cases.PosterUseCase
 import com.example.movieapp.domain.repository.MovieListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -20,8 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val movieListRepository: MovieListRepository,
-    private val posterUseCase: PosterUseCase
+    private val movieListRepository: MovieListRepository
 ) : ViewModel() {
 
     val movies = movieListRepository.getAllMovies()
@@ -40,11 +38,6 @@ class HomeViewModel @Inject constructor(
                 _searchText.update { event.query }
             }
         }
-    }
-
-
-    fun loadPoster(movie: Movie): String {
-        return posterUseCase.loadPoster(movie)
     }
 
     @OptIn(FlowPreview::class)

@@ -11,12 +11,15 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +32,7 @@ import com.example.movieapp.ui.details.DetailsView
 import com.example.movieapp.ui.favorites.FavoritesView
 import com.example.movieapp.ui.favorites.FavoritesViewModel
 import com.example.movieapp.data.utils.Route
+import com.example.movieapp.ui.details.DetailViewModel
 import com.example.movieapp.ui.home.HomeView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
@@ -37,6 +41,8 @@ import kotlin.jvm.java
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+
+    // TODO: CHANGE ROUTES 
     private val splashScreenViewModel: SplashScreenViewModel by lazy {
         ViewModelProvider(this@MainActivity)[SplashScreenViewModel::class.java]
     }
@@ -75,22 +81,23 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 icon = {
-                                    when(screen) {
+                                    when (screen) {
                                         Route.Home ->
                                             AsyncImage(
                                                 modifier = Modifier
                                                     .size(20.dp),
-                                            model = R.drawable.ic_like,
-                                            contentDescription = "Home"
-                                        )
+                                                model = R.drawable.ic_like,
+                                                contentDescription = "Home"
+                                            )
 
                                         Route.Favorites ->
                                             AsyncImage(
                                                 modifier = Modifier
                                                     .size(20.dp),
-                                            model = R.drawable.ic_heart,
-                                            contentDescription = "Favorites"
-                                        )
+                                                model = R.drawable.ic_heart,
+                                                contentDescription = "Favorites"
+                                            )
+
                                         else -> {}
                                     }
                                 },
@@ -116,17 +123,16 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(Route.Favorites.route) {
-                        val favoritesViewModel = hiltViewModel<FavoritesViewModel>()
-                        FavoritesView(
-                            favoritesViewModel = favoritesViewModel,
-                            navController = navController
-                        )
+
+
+                        FavoritesView(navController = navController)
                     }
 
-                    composable(Route.Details.route + "/{movieId}",
+                    composable(
+                        Route.Details.route + "/{movieId}",
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
                     ) { backStackEntry ->
-                        val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+                        backStackEntry.arguments?.getInt("movieId") ?: 0
                         DetailsView(navController = navController)
                     }
                 }
