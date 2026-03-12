@@ -1,5 +1,6 @@
 package com.example.movieapp.ui.favorites
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,19 +61,12 @@ fun FavoritesView(
     val movieState by favoritesViewModel.movieListState.collectAsStateWithLifecycle()
     var editMode by remember { mutableStateOf(false) }
 
-    if (editMode) {
-        EditMode(
-            favoritesViewModel = favoritesViewModel
-        )
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Parchment)
             .padding(16.dp)
     ) {
-
         Header(
             movies = movieState.favoriteMovieList,
             editMode = editMode,
@@ -132,25 +126,20 @@ fun EditButton(
     onEditClick: () -> Unit,
     editMode: Boolean
 ) {
-
-    Box {
-        IconButton(
-            onClick = onEditClick,
-            shape = CircleShape,
-            modifier = Modifier
-                .background(
-                    color = PetalFrost,
-                    shape = CircleShape
-                )
-                .size(37.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_edit),
-                contentDescription = stringResource(R.string.edit_button),
-                modifier = Modifier.size(20.dp),
-                tint = if (editMode) Parchment else Color.Black
+    IconButton(
+        onClick = onEditClick,
+        modifier = Modifier
+            .background(
+                color = PetalFrost
             )
-        }
+            .size(36.dp),
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_edit),
+            contentDescription = stringResource(R.string.edit_button),
+            modifier = Modifier.size(20.dp),
+            tint = if (editMode) Parchment else Color.Black
+        )
     }
 }
 
@@ -225,6 +214,7 @@ fun EmptyListView(navController: NavController) {
     }
 }
 
+
 @Composable
 fun MovieItem(
     movie: Movie,
@@ -232,7 +222,6 @@ fun MovieItem(
     editMode: Boolean,
     favoritesViewModel: FavoritesViewModel
 ) {
-
     // TODO: SWITCH TO CARD AND CHANGE HOW ROUTE IS PASSED
     Column(
         modifier = Modifier
@@ -257,10 +246,9 @@ fun MovieItem(
                 IconButton(
                     modifier = Modifier
                         .size(20.dp),
-                    onClick = {
-                        favoritesViewModel.removeFavorite(movie)
-                    },
-                ) {
+                    onClick = { favoritesViewModel.removeFavorite(movie) },
+                )
+                {
                     Icon(
                         painter = painterResource(R.drawable.ic_remove),
                         contentDescription = stringResource(R.string.remove_from_favorites_button)
@@ -283,9 +271,8 @@ fun MovieItem(
 
 @Composable
 fun EditMode(
-    favoritesViewModel: FavoritesViewModel
+
 ) {
-//    val movieState by favoritesViewModel.movieListState.collectAsState()
 }
 
 @Composable
@@ -310,7 +297,7 @@ fun EditModePrw() {
                 ) {
                     AsyncImage(
                         model = R.drawable.ic_remove,
-                        contentDescription = "Delete"
+                        contentDescription = stringResource(R.string.delete)
                     )
                 }
             }

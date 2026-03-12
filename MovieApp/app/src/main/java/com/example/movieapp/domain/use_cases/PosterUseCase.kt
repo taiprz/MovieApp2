@@ -6,9 +6,11 @@ import javax.inject.Inject
 
 class PosterUseCase @Inject constructor() {
 
+    private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
+
     // TODO: TRANSFER BUSINESS LOGIC FROM VIEWMODEL AND IMPLEMENT HERE  
     fun loadPoster(movie : Movie): String {
 
-        return MovieAPI.BASE_IMAGE_URL + movie.posterPath
+        return BASE_IMAGE_URL + movie.posterPath
     }
 }

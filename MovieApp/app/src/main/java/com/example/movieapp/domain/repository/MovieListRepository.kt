@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieListRepository {
 
-   suspend fun getFavorites(): Flow<List<Movie>>
+    fun getFavorites(): Flow<List<Movie>>
 
     fun searchMoviesPaged(query: String,
     ): Flow<PagingData<Movie>>

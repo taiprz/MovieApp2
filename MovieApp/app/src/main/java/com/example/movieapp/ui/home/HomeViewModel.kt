@@ -1,4 +1,5 @@
 package com.example.movieapp.ui.home
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -23,9 +24,9 @@ class HomeViewModel @Inject constructor(
     private val posterUseCase: PosterUseCase
 ) : ViewModel() {
 
-    val movies: Flow<PagingData<Movie>> = movieListRepository.getAllMovies()
+    val movies = movieListRepository.getAllMovies()
     private val _moviesFound = MutableStateFlow<PagingData<Movie>>(PagingData.empty())
-    val moviesFound: StateFlow<PagingData<Movie>> = _moviesFound.asStateFlow()
+    val moviesFound = _moviesFound.asStateFlow()
     private val _searchText = MutableStateFlow("")
 
     init {
@@ -35,11 +36,9 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: MovieListEvents) {
         when (event) {
-
             is MovieListEvents.Search -> {
                 _searchText.update { event.query }
             }
-
         }
     }
 
@@ -58,7 +57,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun pagedResultsFromSearch(title: String) {
         viewModelScope.launch {

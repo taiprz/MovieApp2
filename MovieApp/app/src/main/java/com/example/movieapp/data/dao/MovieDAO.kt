@@ -12,18 +12,11 @@ interface MovieDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movie: MovieEntity)
 
-//    @Upsert
-//    suspend fun upsertMovieList(movieList: List<MovieEntity>)
-
     @Query("SELECT * FROM MovieEntity WHERE id = :id")
     suspend fun getMovieById(id: Int): MovieEntity?
 
-    @Query("SELECT * FROM MovieEntity WHERE category = :category")
-    fun getFavorites(category: String = "FAVORITES"): Flow<List<MovieEntity>>
-
-    @Query("SELECT EXISTS(SELECT 1 FROM MovieEntity WHERE id = :movieId)")
-     fun exists(movieId: Int):  Flow<Int>
-
+    @Query("SELECT * FROM MovieEntity")
+    fun getFavorites(): Flow<List<MovieEntity>>
 
     @Query("DELETE FROM MovieEntity WHERE id = :movieId")
     suspend fun deleteById(movieId: Int)

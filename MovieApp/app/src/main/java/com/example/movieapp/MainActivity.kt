@@ -127,11 +127,10 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
                     ) { backStackEntry ->
                         val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
-                        DetailsView(movieId = movieId, navController = navController)
+                        DetailsView(navController = navController)
                     }
                 }
             }
         }
     }
 }
-

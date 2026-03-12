@@ -1,3 +1,4 @@
+import org.gradle.api.internal.DocumentationRegistry.BASE_URL
 import java.util.Properties
 
 plugins {
@@ -24,11 +25,23 @@ android {
         properties.load(keystoreFile.inputStream())
         val apiKey = properties.getProperty("API_KEY") ?: ""
 
+        val urlstoreFile = project.rootProject.file("local.properties")
+        properties.load(urlstoreFile.inputStream())
+        val baseURL = properties.getProperty("BASE_URL")
+
         buildConfigField(
             type = "String",
             name = "API_KEY",
             value = apiKey
         )
+
+        buildConfigField(
+            type = "String",
+            name = "BASE_URL",
+            value = baseURL
+        )
+
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

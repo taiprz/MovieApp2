@@ -1,5 +1,6 @@
 package com.example.movieapp.ui.details
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,20 +49,21 @@ import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
+import java.time.LocalDate
+
+
+// CHANGES: CHANGED WHERE PARAMETERS ARE RECEIVED TO A SUPERIOR LEVEL
+// DIVIDED SOME OF THE COMPONENT INTO SMALLER PIECES
 
 // TODO: REIMPLEMENT/REDESIGN SO INSTEAD OF PASSING COMPONENTS THROUGH PARAMETERS, BRING TO HIGHER LEVEL
 // TODO: ALSO IMPLEMENT MORE PREVIEWS
 @Composable
 fun DetailsView(
     detailsViewModel: DetailViewModel = hiltViewModel(),
-    movieId: Int,
     navController: NavController
 ) {
-    LaunchedEffect(movieId) {
-        detailsViewModel.getMovie(movieId)
-    }
 
-    val detailState by detailsViewModel.detailsState.collectAsStateWithLifecycle()
+    val detailState by detailsViewModel.detailsState.collectAsState()
 
     Box(
         modifier = Modifier
@@ -70,65 +73,69 @@ fun DetailsView(
     )
     {
 
-        if (detailState.isLoading) {
-            CircularProgressIndicator()
+        when {
+            detailState.isLoading -> {
+                CircularProgressIndicator()
+            }
         }
 
         detailState.movie?.let { movie ->
 
-            val isFavorite by detailsViewModel.isFavorite(movie.id).collectAsStateWithLifecycle(false)
+            val isFavorite = detailState.isFavorite
 
             MovieDetails(
                 movie = movie,
                 isFavorite = isFavorite,
                 poster = detailsViewModel.loadPoster(movie),
                 onBackClick = { navController.popBackStack() },
-                onAddFavorite = { detailsViewModel.addToFavorites(movie) },
-                onRemoveFavorite = { detailsViewModel.removeFavorite(movie)
-        })
-    }
-}
-}
+                onAddFavorite = { detailsViewModel.addToFavorites(movie)},
+                onRemoveFavorite = {
+                    detailsViewModel.removeFavorite(movie)
+                })
 
-    @Composable
-    fun MovieDetails(
-        movie: Movie,
-        isFavorite: Boolean,
-        poster: Any?,
-        onBackClick: () -> Unit,
-        onAddFavorite: () -> Unit,
-        onRemoveFavorite: () -> Unit
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Parchment)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-
-            Box(modifier = Modifier.aspectRatio(2 / 3f)) {
-                AsyncImage(
-                    model = poster,
-                    contentDescription = movie.title,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillHeight
-                )
-            }
-
-            MovieInfo(movie)
-
-            ButtonsPanel(
-                isFavorite = isFavorite,
-                onBackClick = onBackClick,
-                onAddFavorite = onAddFavorite,
-                onRemoveFavorite = onRemoveFavorite
-            )
+            Log.v("Tai", "Favorite button clicked: $isFavorite")
         }
     }
+}
 
+@Composable
+fun MovieDetails(
+    movie: Movie,
+    isFavorite: Boolean,
+    poster: Any?,
+    onBackClick: () -> Unit,
+    onAddFavorite: () -> Unit,
+    onRemoveFavorite: () -> Unit
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Parchment)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+
+        Box(modifier = Modifier.aspectRatio(2 / 3f)) {
+            AsyncImage(
+                model = poster,
+                contentDescription = movie.title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillHeight
+            )
+        }
+
+        MovieInfo(movie)
+
+        ButtonsPanel(
+            isFavorite = isFavorite,
+            onBackClick = onBackClick,
+            onAddFavorite = onAddFavorite,
+            onRemoveFavorite = onRemoveFavorite
+        )
+    }
+}
 
 @Composable
 fun MovieInfo(movie: Movie) {
@@ -169,7 +176,7 @@ fun MovieInfo(movie: Movie) {
                     .size(16.dp)
             )
 
-            Text1(movie.releaseDate)
+            FontFormat(movie.releaseDate)
 
             VerticalDivider()
 
@@ -180,7 +187,7 @@ fun MovieInfo(movie: Movie) {
                     .size(16.dp)
             )
 
-            Text1(movie.voteAverage.toString())
+            FontFormat(movie.voteAverage.toString())
         }
     }
 }
@@ -284,14 +291,13 @@ fun FavoriteButton(
 }
 
 @Composable
-private fun Text1(
+private fun FontFormat(
     text: String, modifier: Modifier = Modifier
 ) {
     Text(
         modifier = modifier,
         text = text,
         style = MaterialTheme.typography.bodyMedium,
-        color = Color.DarkGray,
         maxLines = 4,
         overflow = TextOverflow.Ellipsis,
     )
@@ -336,7 +342,7 @@ fun Prvw() {
                 originalTitle = "Preview Movie",
                 popularity = 0.0,
                 posterPath = "/qhyyyWrHUbl6QG4udAJj17CBa5.jpg",
-                releaseDate = "2024-01-01",
+                releaseDate = "2025-02-11",
                 voteAverage = 5.365,
                 voteCount = 100,
                 video = false,

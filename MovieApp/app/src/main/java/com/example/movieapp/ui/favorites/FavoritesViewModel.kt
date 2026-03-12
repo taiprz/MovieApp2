@@ -1,6 +1,8 @@
 package com.example.movieapp.ui.favorites
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.repository.MovieRepository
@@ -23,8 +25,7 @@ class FavoritesViewModel@Inject constructor(
 ) : ViewModel() {
 
     private var _movieListState = MutableStateFlow(MovieListState())
-    val movieListState = _movieListState.asStateFlow()
-
+    val movieListState = _movieListState
 
     init {
         getFavoriteMoviesList()
@@ -41,6 +42,8 @@ class FavoritesViewModel@Inject constructor(
                         isLoading = false
                     )
                 }
+
+                Log.v("Tai", "$_movieListState")
             }
         }
     }

@@ -4,6 +4,5 @@ import com.example.movieapp.domain.model.Movie
 
 data class MovieListState(
     val isLoading: Boolean = false,
-    val favoriteMovieListPage: Int = 1,
     val favoriteMovieList : List<Movie> = emptyList()
 )

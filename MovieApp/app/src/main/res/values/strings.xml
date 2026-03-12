@@ -19,4 +19,5 @@
     <string name="no_movies_saved_yet">No movies saved yet</string>
     <string name="discover_movies">Discover movies</string>
     <string name="remove_from_favorites_button">Remove from favorites button</string>
+    <string name="delete">Delete</string>
 </resources>
