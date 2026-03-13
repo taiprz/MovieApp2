@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
@@ -27,7 +27,7 @@ import com.example.movieapp.ui.theme.PetalFrost
 @Composable
 fun HomeView(
     homeViewModel: HomeViewModel = hiltViewModel(),
-    navController: NavHostController
+    onMovieClick: (Movie) -> Unit
 ) {
     val movies = homeViewModel.movies.collectAsLazyPagingItems()
     val moviesFound = homeViewModel.moviesFound.collectAsLazyPagingItems()
@@ -53,11 +53,11 @@ fun HomeView(
 
         // TODO: FIX NAVIGATION IMPLEMENTING NAVIGATION 3 
         
-        //        if (searchText.isEmpty()) {
-//            MovieList(movies = movies, onMovieClick =  )
-//        } else {
-//            MovieList(movies = moviesFound, onMovieClick = )
-//        }
+                if (searchText.isEmpty()) {
+            MovieList(movies = movies, onMovieClick = onMovieClick )
+        } else {
+            MovieList(movies = moviesFound, onMovieClick = onMovieClick)
+        }
     }
 }
 
@@ -138,6 +138,28 @@ fun MovieItem(
         }
     }
 }
+
+@Preview
+@Composable
+fun Searchbar() {
+    TextField(
+        value = "searchText",
+        onValueChange = {  },
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = { Text("Search movies...") },
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = PetalFrost,
+            unfocusedContainerColor = PetalFrost,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        )
+    )
+}
+
+
 
 
 

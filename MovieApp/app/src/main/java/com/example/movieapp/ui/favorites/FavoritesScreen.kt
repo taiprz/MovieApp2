@@ -26,14 +26,14 @@ import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.data.utils.Route
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.ui.home.MovieListState
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
-import dagger.hilt.android.lifecycle.HiltViewModel
+
 @Composable
 fun FavoritesView(
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
-    navController : NavHostController
+    onMovieClick: (Movie) -> Unit,
+    onDiscoverClick: () -> Unit
 ) {
 
     val editModeState by favoritesViewModel.editMode.collectAsStateWithLifecycle()
@@ -61,7 +61,7 @@ fun FavoritesView(
             }
 
             favMoviesState.favoriteMovieList.isEmpty() -> {
-                EmptyListView( onDiscoverClick = { navController.navigate(Route.Home.route) })
+                EmptyListView( onDiscoverClick = onDiscoverClick)
             }
 
             else -> {
@@ -69,7 +69,6 @@ fun FavoritesView(
                     movies = favMoviesState.favoriteMovieList,
                     editMode = editModeState,
                     onRemoveFavorite = { movie -> favoritesViewModel.removeFavorite(movie) },
-                    // TODO: FIX THIS ROUTE WITH NAVIGATION 3 
                     onMovieClick = onMovieClick
                 )
             }

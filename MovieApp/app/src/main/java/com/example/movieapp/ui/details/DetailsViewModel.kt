@@ -1,11 +1,18 @@
 package com.example.movieapp.ui.details
 
+import android.util.Log
+import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.repository.MovieRepository
 import com.example.movieapp.data.utils.Resource
+import com.example.movieapp.data.utils.Route
 import com.example.movieapp.domain.repository.MovieListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,20 +23,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val movieRepository: MovieRepository,
-    private val savedStateHandle : SavedStateHandle,
-    private val movieListRepository: MovieListRepository
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
-    // CHANGES: Implemented savedStateHandle and changed logic to init
-    // added logic to the charge itself to see if favorite
-    private val movieId: Int = savedStateHandle["movieId"] ?: 0
     private val _detailState = MutableStateFlow(DetailState())
     val detailsState = _detailState.asStateFlow()
-
-    init {
-        getMovie(movieId)
-    }
 
      fun getMovie(id: Int) {
         viewModelScope.launch {

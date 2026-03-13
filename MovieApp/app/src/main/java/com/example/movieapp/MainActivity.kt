@@ -11,28 +11,24 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import com.example.movieapp.data.navigation.MainScaffoldNavigation
 import com.example.movieapp.ui.home.HomeViewModel
 import com.example.movieapp.ui.splashcreen.SplashScreenViewModel
 import com.example.movieapp.ui.details.DetailsView
 import com.example.movieapp.ui.favorites.FavoritesView
-import com.example.movieapp.ui.favorites.FavoritesViewModel
 import com.example.movieapp.data.utils.Route
-import com.example.movieapp.ui.details.DetailViewModel
 import com.example.movieapp.ui.home.HomeView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
@@ -42,7 +38,7 @@ import kotlin.jvm.java
 class MainActivity : ComponentActivity() {
 
 
-    // TODO: CHANGE ROUTES 
+    // TODO: CHANGE ROUTES
     private val splashScreenViewModel: SplashScreenViewModel by lazy {
         ViewModelProvider(this@MainActivity)[SplashScreenViewModel::class.java]
     }
@@ -65,78 +61,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController = rememberNavController()
-
-            Scaffold(
-                bottomBar = {
-                    NavigationBar {
-                        val routes = listOf(Route.Home, Route.Favorites)
-                        routes.forEach { screen ->
-                            NavigationBarItem(
-                                selected = navController.currentDestination?.route == screen.route,
-                                onClick = {
-                                    navController.navigate(screen.route) {
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                icon = {
-                                    when (screen) {
-                                        Route.Home ->
-                                            AsyncImage(
-                                                modifier = Modifier
-                                                    .size(20.dp),
-                                                model = R.drawable.ic_like,
-                                                contentDescription = "Home"
-                                            )
-
-                                        Route.Favorites ->
-                                            AsyncImage(
-                                                modifier = Modifier
-                                                    .size(20.dp),
-                                                model = R.drawable.ic_heart,
-                                                contentDescription = "Favorites"
-                                            )
-
-                                        else -> {}
-                                    }
-                                },
-                                label = { Text(screen.name) }
-                            )
-                        }
-                    }
-                }
-            ) { padding ->
-                NavHost(
-                    navController = navController,
-                    startDestination = Route.Home.route,
-                    modifier = Modifier
-                        .padding(padding)
-
-                ) {
-                    composable(Route.Home.route) {
-                        val homeViewModel: HomeViewModel = hiltViewModel()
-                        HomeView(
-                            homeViewModel = homeViewModel,
-                            navController = navController
-                        )
-                    }
-
-                    composable(Route.Favorites.route) {
-
-
-                        FavoritesView(navController = navController)
-                    }
-
-                    composable(
-                        Route.Details.route + "/{movieId}",
-                        arguments = listOf(navArgument("movieId") { type = NavType.IntType })
-                    ) { backStackEntry ->
-                        backStackEntry.arguments?.getInt("movieId") ?: 0
-                        DetailsView(navController = navController)
-                    }
-                }
-            }
+            MainScaffoldNavigation()
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.movieapp.ui.details
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +41,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
@@ -51,15 +54,13 @@ import com.example.movieapp.ui.theme.PetalFrost
 // CHANGES: CHANGED WHERE PARAMETERS ARE RECEIVED TO A SUPERIOR LEVEL
 // DIVIDED SOME OF THE COMPONENT INTO SMALLER PIECES
 
-// TODO: REIMPLEMENT/REDESIGN SO INSTEAD OF PASSING COMPONENTS THROUGH PARAMETERS, BRING TO HIGHER LEVEL
-// TODO: ALSO IMPLEMENT MORE PREVIEWS
 @Composable
 fun DetailsView(
-    detailsViewModel: DetailViewModel = hiltViewModel(),
-    navController: NavController
+    detailsvm: DetailViewModel = hiltViewModel(),
+    backStack: NavBackStack<NavKey>
 ) {
 
-    val detailState by detailsViewModel.detailsState.collectAsState()
+    val detailState by detailsvm.detailsState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -83,11 +84,11 @@ fun DetailsView(
                 movie = movie,
                 isFavorite = isFavorite,
                 poster = movie.posterPath,
-                onBackClick = { navController.popBackStack() },
-                onAddFavorite = { detailsViewModel.addToFavorites(movie)},
-                onRemoveFavorite = {
-                    detailsViewModel.removeFavorite(movie)
-                })
+                onBackClick = {
+                    backStack.removeLastOrNull()
+                },
+                onAddFavorite = { detailsvm.addToFavorites(movie) },
+                onRemoveFavorite = { detailsvm.removeFavorite(movie) })
         }
     }
 }

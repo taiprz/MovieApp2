@@ -3,9 +3,13 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
+
+
+
 }
 
 android {
@@ -122,16 +126,16 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-
+    // Navigation
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.paging.runtime)
-
     testImplementation(libs.androidx.paging.common)
-
     implementation(libs.androidx.paging.rxjava2)
-
     implementation(libs.androidx.paging.rxjava3)
-
     implementation(libs.androidx.paging.guava)
-
     implementation(libs.androidx.paging.compose)
+
+    // Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
 }
