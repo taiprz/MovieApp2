@@ -1,5 +1,7 @@
 package com.example.movieapp.domain.model
 
+import java.time.LocalDate
+
 data class Movie(
     val adult: Boolean,
     val backdropPath: String,

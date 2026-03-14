@@ -3,9 +3,13 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
+
+
+
 }
 
 android {
@@ -19,16 +23,44 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
+        // apikey saved
         val keystoreFile = project.rootProject.file("apikey.properties")
         val properties = Properties()
         properties.load(keystoreFile.inputStream())
         val apiKey = properties.getProperty("API_KEY") ?: ""
+
+        // baseUrl saved
+        val urlstoreFile = rootProject.file("local.properties")
+        val properties2 = Properties()
+        properties.load(urlstoreFile.inputStream())
+        val baseURL = properties.getProperty("BASE_URL") ?: ""
+
+        // baseimg saveD
+        val imgstoreFile = rootProject.file("local.properties")
+        val properties3 = Properties()
+        properties.load(imgstoreFile.inputStream())
+        val baseImageURL = properties.getProperty("BASE_IMAGE_URL") ?: ""
+
 
         buildConfigField(
             type = "String",
             name = "API_KEY",
             value = apiKey
         )
+
+        buildConfigField(
+            type = "String",
+            name = "BASE_URL",
+            value = baseURL
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "BASE_IMAGE_URL",
+            value = baseImageURL
+        )
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -94,16 +126,16 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-
+    // Navigation
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.paging.runtime)
-
     testImplementation(libs.androidx.paging.common)
-
     implementation(libs.androidx.paging.rxjava2)
-
     implementation(libs.androidx.paging.rxjava3)
-
     implementation(libs.androidx.paging.guava)
-
     implementation(libs.androidx.paging.compose)
+
+    // Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
 }
