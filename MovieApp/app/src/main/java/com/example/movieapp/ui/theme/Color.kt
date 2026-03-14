@@ -9,17 +9,17 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val DustGrey = Color(0xFFdbd3c9)
+val BlueStale = Color(84,106,118)
 
-val PetalFrost = Color(0xFFCBAA7A)
+val CoolSteel = Color(136,160,168)
 
-val Parchment = Color(0xFFEFEBE7)
+val Celadon = Color(180,206,179)
 
-val DarkPink = Color(0xFFee7674)
-val LightPink = Color(0xFFf9b5ac)
-val Ash = Color(0xFFd0d6b5)
-val Green = Color(0xff9dbf9e)
-val Purple = Color(0xff987284)
+val DustGrey = Color(219,211,201)
+
+val PetalFrost = Color(208, 170, 122, 255)
+
+val Parchment = Color(239, 235, 231)
 
 
 

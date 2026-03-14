@@ -5,16 +5,11 @@ import com.example.movieapp.data.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-
-    // CHANGES: REMOVED EXISTS FUNCTION
-    suspend fun getMovieByIdFromApi(id: Int): Flow<Resource<Movie>>
-
-    suspend fun getMovieByIdFromDB(id: Int) : Boolean
+    suspend fun getMovieById(id: Int): Flow<Resource<Movie>>
 
     suspend fun addFavorite(movie: Movie)
 
     suspend fun removeFavorite(movieId: Int)
 
-
-
+     fun isFavorite(movieId: Int): Flow<Boolean>
 }
