@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// TODO: CHECK AND FIND WAYS TO IMPROVE 
 class SplashScreenViewModel : ViewModel() {
     // the first one is private and can be updated, meanwhile the second one is public and readonly
     private val _isSplashScreenVisible : MutableStateFlow<Boolean> = MutableStateFlow(true)
