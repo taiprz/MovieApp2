@@ -1,125 +1,97 @@
 package com.example.movieapp.ui.home
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.ui.navigation.BottomNavigationBar
 import com.example.movieapp.ui.theme.DustGrey
-import com.example.movieapp.ui.theme.PetalFrost
+import com.example.movieapp.ui.theme.Poppins
+import dev.chrisbanes.haze.HazeState
 
 @Composable
 fun HomeView(
     homeViewModel: HomeViewModel = hiltViewModel(),
-    onMovieClick: (Movie) -> Unit
+    onMovieClick: (Movie) -> Unit,
 ) {
-    val movies = homeViewModel.movies.collectAsLazyPagingItems()
-    val moviesFound = homeViewModel.moviesFound.collectAsLazyPagingItems()
 
-    var searchText by rememberSaveable { mutableStateOf("") }
+    val movies = homeViewModel.movies.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White,
-                        Color(0xFFee7674),
-                        Color(0xFFf9b5ac),
-                        Color(0xFFd0d6b5),
-                        Color(0xff9dbf9e),
-                        Color(0xff987284)
-                    )
-                )
-            )
-            .padding(16.dp)
+            .padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        SearchBar(
-            searchText = searchText,
-            onSearchTextChange = {
-                searchText = it
-                homeViewModel.onEvent(MovieListEvents.Search(it))
-            }
+        AppName()
+
+        Popular()
+
+        MovieList(
+            movies = movies,
+            onMovieClick = onMovieClick
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-       
-
-        if (searchText.isEmpty()) {
-            MovieList(movies = movies, onMovieClick = onMovieClick)
-        } else {
-            MovieList(movies = moviesFound, onMovieClick = onMovieClick)
-        }
     }
 }
 
-@Composable
-fun SearchBar(
-    searchText: String,
-    onSearchTextChange: (String) -> Unit
-) {
-    TextField(
-        value = searchText,
-        onValueChange = { onSearchTextChange(it) },
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Search movies...") },
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = PetalFrost,
-            unfocusedContainerColor = PetalFrost,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
-    )
-}
 
 @Composable
 fun MovieList(
     movies: LazyPagingItems<Movie>,
     onMovieClick: (Movie) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
+
         items(movies.itemCount) { index ->
+
             movies[index]?.let { movie ->
+
                 MovieItem(
                     movie = movie,
                     onMovieClick = onMovieClick
                 )
+
             }
-            Spacer(modifier = Modifier.height(16.dp))
+
         }
+
     }
 }
 
@@ -128,79 +100,21 @@ fun MovieItem(
     movie: Movie,
     onMovieClick: (Movie) -> Unit
 ) {
-    Row(
+
+    Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(color = DustGrey)
-            .clickable {
-                onMovieClick(movie)
-            }
-            .padding(8.dp)) {
+            .width(150.dp)
+            .aspectRatio(2f / 3f)
+            .clickable { onMovieClick(movie) },
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
 
         AsyncImage(
             model = movie.posterPath,
             contentDescription = movie.title,
-            modifier = Modifier.size(80.dp)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = movie.title, style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = movie.overview,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-}
-
-@Composable
-fun SearchbarPrv(function: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    val focusRequester = remember {
-        FocusRequester()
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 20.dp)
-            .shadow(
-                ambientColor = Color(0xFFf9b5ac),
-                spotColor = Color(0xff987284),
-                elevation = if (isFocused) 15.dp else 0.dp,
-                clip = true,
-                shape = CircleShape
-            ),
-        shape = CircleShape
-    ) {
-        BasicTextField(
-            value = "Search movies...",
-            onValueChange = { },
-            interactionSource = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    brush = Brush
-                        .horizontalGradient(
-                            listOf
-                                (
-                                Color(0xff987284),
-                                Color(0xff9dbf9e)
-                            )
-                        ),
-                    shape = CircleShape
-                )
-                .padding(16.dp)
-                .background(Color.White)
-                .focusRequester(focusRequester),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit
         )
     }
 }
@@ -215,7 +129,6 @@ fun Background() {
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         Color.White,
-                        Color(0xFFee7674),
                         Color(0xFFf9b5ac),
                         Color(0xFFd0d6b5),
                         Color(0xff9dbf9e),
@@ -223,13 +136,160 @@ fun Background() {
                     )
                 )
             )
-            .padding(16.dp)
+            .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SearchbarPrv() {
 
+        AppName()
+        Popular()
+        MoviesList()
+//        MovieItemPrv()
+
+    }
+}
+
+@Composable
+private fun AppName() {
+
+    Text(
+        text = "Movi3 Arch1ve",
+        modifier = Modifier
+            .fillMaxWidth(),
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        style = TextStyle(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xff838E83),
+                    Color(0xFFf9b5ac),
+                    Color(0xFF564787)
+                )
+            )
+        )
+    )
+}
+
+@Composable
+private fun Popular() {
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Text(
+            text = "Popular",
+            fontFamily = Poppins,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 20.sp
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.ic_star),
+            contentDescription = "Popular icon",
+            modifier = Modifier.size(18.dp)
+        )
+    }
+}
+
+@Composable
+private fun FontFormat(
+    text: String, modifier: Modifier = Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        fontFamily = Poppins,
+        maxLines = 4,
+        overflow = TextOverflow.Ellipsis,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        style = TextStyle(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
+                )
+            )
+        )
+    )
+}
+
+@Composable
+fun MoviesList() {
+
+    val sampleMovies = listOf(
+        Movie(
+            id = 1,
+            title = "Inception",
+            originalTitle = "Inception",
+            originalLanguage = "en",
+            overview = "",
+            popularity = 82.3,
+            posterPath = "https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg",
+            backdropPath = "",
+            adult = false,
+            video = false,
+            voteAverage = 8.3,
+            voteCount = 22186,
+            genreIds = listOf("28","878","12"),
+            releaseDate = "2010-07-16",
+            category = "Popular"
+        ),
+        Movie(
+            id = 2,
+            title = "The Matrix",
+            originalTitle = "The Matrix",
+            originalLanguage = "en",
+            overview = "",
+            popularity = 77.5,
+            posterPath = "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+            backdropPath = "",
+            adult = false,
+            video = false,
+            voteAverage = 8.1,
+            voteCount = 19730,
+            genreIds = listOf("28","878"),
+            releaseDate = "1999-03-31",
+            category = "Popular"
+        )
+    )
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(sampleMovies) { movie ->
+            MovieItem(movie = movie, onMovieClick = {})
         }
     }
 }
+
+@Preview
+@Composable
+fun MovieItemPrv() {
+    Card(
+        modifier = Modifier
+            .border(
+                border = BorderStroke(
+                    8.dp,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
+                        )
+                    ),
+                ), shape = RoundedCornerShape(16.dp)
+            )
+            .aspectRatio(2 / 1f), shape = RoundedCornerShape(16.dp)
+    ) {}
+}
+
+
+
 
 
 

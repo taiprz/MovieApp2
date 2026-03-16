@@ -138,4 +138,8 @@ dependencies {
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
+    // design UI
+
+    implementation(libs.haze.jetpack.compose)
+
 }

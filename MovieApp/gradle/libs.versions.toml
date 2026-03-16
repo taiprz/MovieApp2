@@ -1,4 +1,5 @@
 [versions]
+haze-jetpack-compose = "0.4.1"
 kotlin = "2.3.10"
 agp = "8.13.1"
 compose-bom = "2026.02.00"
@@ -62,6 +63,7 @@ androidx-paging-guava = { module = "androidx.paging:paging-guava", version.ref =
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging-runtime" }
 androidx-paging-rxjava2 = { module = "androidx.paging:paging-rxjava2", version.ref = "paging-rxjava2" }
 androidx-paging-rxjava3 = { module = "androidx.paging:paging-rxjava3", version.ref = "paging-rxjava3" }
+haze-jetpack-compose = { module = "dev.chrisbanes.haze:haze-jetpack-compose", version.ref = "haze-jetpack-compose" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
 # Hilt

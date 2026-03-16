@@ -13,8 +13,6 @@ import kotlin.text.split
 // CHANGES: Mapped ReleaseDate format to fit the country
 // Deleted unnecessary mapper (Dto to Entity)
 
-
-// TODO: fix the image url so its on buildconfig
 private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
 fun String?.toDateFormatted(): String {
@@ -57,7 +55,7 @@ fun MovieDTO.toMovie(
 ): Movie {
     return Movie(
         adult = adult ?: false,
-        backdropPath = backdropPath ?: "",
+        backdropPath = (BASE_IMAGE_URL + backdropPath) ?: "",
         originalLanguage = originalLanguage ?: "",
         overview = overview ?: "",
         posterPath = (BASE_IMAGE_URL + posterPath),

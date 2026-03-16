@@ -21,10 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.movieapp.R
-import com.example.movieapp.data.utils.Route
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.ui.theme.Parchment
 import com.example.movieapp.ui.theme.PetalFrost
@@ -33,7 +31,8 @@ import com.example.movieapp.ui.theme.PetalFrost
 fun FavoritesView(
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     onMovieClick: (Movie) -> Unit,
-    onDiscoverClick: () -> Unit
+    onDiscoverClick: () -> Unit,
+    onSearchClick: () -> Boolean
 ) {
 
     val editModeState by favoritesViewModel.editMode.collectAsStateWithLifecycle()

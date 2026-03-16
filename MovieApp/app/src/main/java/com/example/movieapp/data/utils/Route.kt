@@ -11,6 +11,9 @@ sealed interface Route: NavKey {
 
     @Serializable
     data object Home : Route
+
+    @Serializable
+    data object Search : Route
     @Serializable
     data class Details(val id: Int) : Route
 

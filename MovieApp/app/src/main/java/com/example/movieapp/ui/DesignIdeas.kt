@@ -118,6 +118,7 @@ fun Background() {
 
 
 
+
 @Preview
 @Composable
 fun MovieItem() {

@@ -23,40 +23,5 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val movies = getPopular()
-    private val _moviesFound = MutableStateFlow<PagingData<Movie>>(PagingData.empty())
-    val moviesFound = _moviesFound.asStateFlow()
-    private val _searchText = MutableStateFlow("")
 
-    init {
-        observeSearch()
-    }
-
-
-    fun onEvent(event: MovieListEvents) {
-        when (event) {
-            is MovieListEvents.Search -> {
-                _searchText.update { event.query }
-            }
-        }
-    }
-
-    @OptIn(FlowPreview::class)
-    private fun observeSearch() {
-        viewModelScope.launch {
-            _searchText.debounce(500).collectLatest { query ->
-                if (query.isNotBlank()) {
-                    pagedResultsFromSearch(query)
-                }
-            }
-        }
-    }
-
-    private fun pagedResultsFromSearch(title: String) {
-        viewModelScope.launch {
-            searchMovie(title)
-                .collectLatest { pagingData ->
-                    _moviesFound.value = pagingData
-                }
-        }
-    }
 }

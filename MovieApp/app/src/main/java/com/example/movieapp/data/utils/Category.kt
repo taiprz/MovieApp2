@@ -4,9 +4,7 @@ object Category
 {
     // movie categories
     const val POPULAR = "popular"
-
     const val FAVORITES = "favorites"
-
 
 
 }
