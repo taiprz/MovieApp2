@@ -2,11 +2,10 @@ package com.example.movieapp.ui.favorites
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.domain.repository.MovieRepository
-import com.example.movieapp.domain.repository.MovieListRepository
+import com.example.movieapp.domain.use_case.favorites.GetFavoritesUseCase
+import com.example.movieapp.domain.use_case.favorites.RemoveFavoriteUseCase
 import com.example.movieapp.ui.home.MovieListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +16,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
 @HiltViewModel
-class FavoritesViewModel@Inject constructor(
-    private val movieListRepository: MovieListRepository,
-    private val movieRepository: MovieRepository
+class FavoritesViewModel @Inject constructor(
+    private val getFavorites: GetFavoritesUseCase,
+    private val removeFavorite: RemoveFavoriteUseCase
 ) : ViewModel() {
 
-    // CHANGES: Moved EditMode logic from Screen to ViewModel
     private val _editMode = MutableStateFlow(false)
     val editMode = _editMode.asStateFlow()
 
@@ -39,7 +36,7 @@ class FavoritesViewModel@Inject constructor(
         viewModelScope.launch {
             _movieListState.update { it.copy(isLoading = true) }
 
-            movieListRepository.getFavorites().collectLatest { favoriteList ->
+           getFavorites().collectLatest { favoriteList ->
                 _movieListState.update {
                     it.copy(
                         favoriteMovieList = favoriteList,
@@ -54,7 +51,7 @@ class FavoritesViewModel@Inject constructor(
 
     fun removeFavorite(movie: Movie) {
         viewModelScope.launch {
-            movieRepository.removeFavorite(movie.id)
+            removeFavorite(movie.id)
         }
     }
 

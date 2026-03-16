@@ -1,15 +1,15 @@
-package com.example.movieapp.domain.repository
+package com.example.movieapp.data.repository
 
 import com.example.movieapp.DAO.MovieDAO
-import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.Category
 import com.example.movieapp.data.utils.Resource
 import com.example.movieapp.data.utils.toMovie
 import com.example.movieapp.data.utils.toMovieEntity
+import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import okio.IOException
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class MovieRepositoryImplementation @Inject constructor(
     private val movieDao: MovieDAO
 ) : MovieRepository {
 
-    // TODO: FIND BETTER IMPLEMENTATION 
+    // TODO: FIND BETTER IMPLEMENTATION
     override suspend fun getMovieByIdFromApi(id: Int): Flow<Resource<Movie>> = flow {
         emit(Resource.Loading(true))
         try {

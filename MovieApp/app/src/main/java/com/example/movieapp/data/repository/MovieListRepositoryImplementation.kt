@@ -1,14 +1,15 @@
-package com.example.movieapp.domain.repository
+package com.example.movieapp.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.movieapp.DAO.MovieDAO
-import com.example.movieapp.data.source.MovieDataPagingSource
-import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.data.services.MovieAPI
+import com.example.movieapp.data.source.MovieDataPagingSource
 import com.example.movieapp.data.utils.Category
 import com.example.movieapp.data.utils.toMovie
+import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.domain.repository.MovieListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -28,9 +29,11 @@ class MovieListRepositoryImplementation @Inject constructor(
     }
 
     override  fun getAllMovies(): Flow<PagingData<Movie>> {
-       return Pager(config = PagingConfig(
-           pageSize = MAX_ITEMS,
-           prefetchDistance = PREFETCH_ITEMS),
+       return Pager(
+           config = PagingConfig(
+               pageSize = MAX_ITEMS,
+               prefetchDistance = PREFETCH_ITEMS
+           ),
            pagingSourceFactory = { MovieDataPagingSource(movieAPI, "") }
        ).flow
     }
@@ -49,7 +52,3 @@ class MovieListRepositoryImplementation @Inject constructor(
         const val PREFETCH_ITEMS = 3
     }
 }
-
-
-
-

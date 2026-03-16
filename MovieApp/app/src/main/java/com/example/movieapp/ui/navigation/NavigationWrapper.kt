@@ -1,4 +1,4 @@
-package com.example.movieapp.data.navigation
+package com.example.movieapp.ui.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,9 +16,7 @@ import com.example.movieapp.data.utils.Route.Home
 import com.example.movieapp.ui.details.DetailViewModel
 import com.example.movieapp.ui.details.DetailsView
 import com.example.movieapp.ui.favorites.FavoritesView
-import com.example.movieapp.ui.favorites.FavoritesViewModel
 import com.example.movieapp.ui.home.HomeView
-import com.example.movieapp.ui.home.HomeViewModel
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.Modifier
@@ -56,13 +54,13 @@ fun BottomNavigationBar(
 @Composable
 fun MainScaffoldNavigation() {
 
-    val backStack = rememberNavBackStack(Route.Home)
+    val backStack = rememberNavBackStack(Home)
 
     Scaffold(
 
         bottomBar = {
             BottomNavigationBar(
-                onHomeClick = { backStack.add(Route.Home) },
+                onHomeClick = { backStack.add(Home) },
                 onFavoritesClick = { backStack.add(Route.Favorites) }
             )
         }

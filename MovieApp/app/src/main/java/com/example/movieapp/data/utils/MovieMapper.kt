@@ -1,8 +1,7 @@
 package com.example.movieapp.data.utils
 
-import com.example.movieapp.BuildConfig
 import com.example.movieapp.data.dto.MovieDTO
-import com.example.movieapp.entities.MovieEntity
+import com.example.movieapp.data.local.entities.MovieEntity
 import com.example.movieapp.domain.model.Movie
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

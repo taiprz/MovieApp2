@@ -6,13 +6,21 @@ import com.example.movieapp.BuildConfig
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.MovieDB
+import com.example.movieapp.domain.repository.MovieListRepository
+import com.example.movieapp.domain.repository.MovieRepository
+import com.example.movieapp.domain.use_case.favorites.AddFavoriteUseCase
+import com.example.movieapp.domain.use_case.favorites.GetFavoritesUseCase
+import com.example.movieapp.domain.use_case.favorites.IsMovieFavoriteUseCase
+import com.example.movieapp.domain.use_case.favorites.RemoveFavoriteUseCase
+import com.example.movieapp.domain.use_case.movies.GetMovieDetailUseCase
+import com.example.movieapp.domain.use_case.movies.GetPopularUseCase
+import com.example.movieapp.domain.use_case.movies.SearchMovieUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -22,15 +30,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 
 object AppModule {
-        private const val BASE_URL= "https://api.themoviedb.org/3/"
-
-    // CHANGES: instead of global variables (interceptor, okhttpclient),
-    // moved everything into its own function so it can be handled by hilt
-
+    private const val BASE_URL = "https://api.themoviedb.org/3/"
 
     @Provides
     @Singleton
-    fun providesInterceptor() : Interceptor  {
+    fun providesInterceptor(): Interceptor {
         return Interceptor {
             val originalRequest = it.request()
             val newHttpUrl = originalRequest.url.newBuilder()
@@ -46,17 +50,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesClient(interceptor: Interceptor): OkHttpClient
-    {
+    fun providesClient(interceptor: Interceptor): OkHttpClient {
         return OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build()
+            .addInterceptor(interceptor)
+            .build()
     }
 
     // api connection
     @Provides
     @Singleton
-    fun providesMovieApi(client : OkHttpClient) : MovieAPI {
+    fun providesMovieApi(client: OkHttpClient): MovieAPI {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
@@ -68,7 +71,7 @@ object AppModule {
     // db connection
     @Provides
     @Singleton
-    fun providesMovieDB(app: Application) : MovieDB {
+    fun providesMovieDB(app: Application): MovieDB {
         return Room.databaseBuilder(
             app,
             MovieDB::class.java,

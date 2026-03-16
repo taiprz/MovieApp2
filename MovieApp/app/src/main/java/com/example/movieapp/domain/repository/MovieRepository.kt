@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
 
-    // CHANGES: REMOVED EXISTS FUNCTION
     suspend fun getMovieByIdFromApi(id: Int): Flow<Resource<Movie>>
 
     suspend fun getMovieByIdFromDB(id: Int) : Boolean

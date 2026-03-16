@@ -4,12 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.domain.repository.MovieListRepository
+import com.example.movieapp.domain.use_case.movies.GetPopularUseCase
+import com.example.movieapp.domain.use_case.movies.SearchMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -19,10 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val movieListRepository: MovieListRepository
+    getPopular: GetPopularUseCase,
+    private val searchMovie: SearchMovieUseCase
 ) : ViewModel() {
 
-    val movies = movieListRepository.getAllMovies()
+    val movies = getPopular()
     private val _moviesFound = MutableStateFlow<PagingData<Movie>>(PagingData.empty())
     val moviesFound = _moviesFound.asStateFlow()
     private val _searchText = MutableStateFlow("")
@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
 
     private fun pagedResultsFromSearch(title: String) {
         viewModelScope.launch {
-            movieListRepository.searchMoviesPaged(title)
+            searchMovie(title)
                 .collectLatest { pagingData ->
                     _moviesFound.value = pagingData
                 }
