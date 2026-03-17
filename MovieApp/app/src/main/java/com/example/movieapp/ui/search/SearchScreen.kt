@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -64,17 +66,6 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White,
-                        Color(0xFFf9b5ac),
-                        Color(0xFFd0d6b5),
-                        Color(0xff9dbf9e),
-                        Color(0xff987284)
-                    )
-                )
-            )
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
 
@@ -130,7 +121,7 @@ fun Searchbar(
 
             placeholder = {
                 Text(
-                    "Search movies...", fontFamily = Poppins
+                    "Enter movie title", fontFamily = Poppins
                 )
             },
 
@@ -167,6 +158,9 @@ private fun SearchMovieList(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(12.dp)
 
         ) {
         items(movies.itemCount) { index ->
@@ -180,6 +174,27 @@ private fun SearchMovieList(
         }
     }
 }
+
+@Composable
+private fun SearchMovieList2(
+    movies: List<Movie>,
+    onMovieClick: (Movie) -> Unit
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(12.dp)
+        ) {
+        items(movies) { movie ->
+                SearchMovieItem(
+                    movie = movie,
+                    onMovieClick = onMovieClick
+                )
+            }
+        }
+    }
+
 
 
 @Composable
@@ -218,7 +233,8 @@ private fun SearchMovieItem(
 @Composable
 private fun AppName() {
     Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
     ) {
         FontFormat("Movi3 Arch1ve")
     }
@@ -234,7 +250,7 @@ private fun FontFormat(
         fontFamily = Poppins,
         maxLines = 4,
         overflow = TextOverflow.Ellipsis,
-        fontSize = 24.sp,
+        fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
         style = TextStyle(
             brush = Brush.linearGradient(
@@ -246,12 +262,11 @@ private fun FontFormat(
     )
 }
 
-
 @Preview
 @Composable
 fun Background() {
 
-    val sampleMovies = listOf(
+    val sampleMovies: List<Movie> = listOf(
         Movie(
             id = 1,
             title = "Inception",
@@ -305,6 +320,11 @@ fun Background() {
             .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
+        AppName()
+        Searchbar("Text") {}
+
+        SearchMovieList2(sampleMovies, onMovieClick = {})
+
 
 //        val sampleMovies =
 //            listOf<Movie>(
@@ -343,8 +363,7 @@ fun Background() {
 //        )
     }
 
-    AppName()
-    Searchbar("Text") {}
+
 }
 
 

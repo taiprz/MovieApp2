@@ -3,6 +3,7 @@ package com.example.movieapp.ui.favorites
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -11,28 +12,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.ui.theme.Parchment
-import com.example.movieapp.ui.theme.PetalFrost
+import com.example.movieapp.ui.theme.Poppins
 
 @Composable
 fun FavoritesView(
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     onMovieClick: (Movie) -> Unit,
-    onDiscoverClick: () -> Unit,
-    onSearchClick: () -> Boolean
+    onDiscoverClick: () -> Unit
 ) {
 
     val editModeState by favoritesViewModel.editMode.collectAsStateWithLifecycle()
@@ -41,13 +43,16 @@ fun FavoritesView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Parchment)
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+
+        AppName()
+
         Header(
             movies = favMoviesState.favoriteMovieList,
             editMode = editModeState,
-            onEditClick = { favoritesViewModel.toggleEditMode()},
+            onEditClick = { favoritesViewModel.toggleEditMode() },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -60,7 +65,7 @@ fun FavoritesView(
             }
 
             favMoviesState.favoriteMovieList.isEmpty() -> {
-                EmptyListView( onDiscoverClick = onDiscoverClick)
+                EmptyListView(onDiscoverClick = onDiscoverClick)
             }
 
             else -> {
@@ -83,14 +88,10 @@ fun Header(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            stringResource(R.string.your_favorites),
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center
-        )
+
+        FontFormat("Your Favorites")
 
         if (movies.isNotEmpty()) {
             EditButton(editMode, onEditClick)
@@ -103,14 +104,13 @@ fun EditButton(editMode: Boolean, onEditClick: () -> Unit) {
     IconButton(
         onClick = onEditClick,
         modifier = Modifier
-            .background(PetalFrost)
             .size(36.dp)
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_edit),
             contentDescription = stringResource(R.string.edit_button),
             modifier = Modifier.size(20.dp),
-            tint = if (editMode) Parchment else Color.Black
+            tint = if (editMode) Color.Black else Color.Black.copy(alpha = 0.5f)
         )
     }
 }
@@ -129,7 +129,7 @@ fun FavMovieList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movies) { movie ->
-            MovieItem(
+            FavoriteMovieItem(
                 movie = movie,
                 editMode = editMode,
                 poster = movie.posterPath,
@@ -141,51 +141,47 @@ fun FavMovieList(
 }
 
 @Composable
-fun MovieItem(
+private fun FavoriteMovieItem(
     movie: Movie,
-    editMode: Boolean,
-    poster: Any?,
-    onRemoveFavorite: (Movie) -> Unit,
     onMovieClick: (Movie) -> Unit,
+    editMode: Boolean,
+    poster: String,
+    onRemoveFavorite: (Movie) -> Unit
 ) {
-    Column(
+    Card(
         modifier = Modifier
-            .padding(4.dp)
+            .width(150.dp)
+            .aspectRatio(2f / 3f)
             .clickable { onMovieClick(movie) },
-        horizontalAlignment = Alignment.CenterHorizontally
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Box {
-            AsyncImage(
-                model = poster,
-                contentDescription = movie.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f / 3f)
-            )
-
-            if (editMode) {
-                IconButton(
-                    modifier = Modifier.size(20.dp),
-                    onClick = { onRemoveFavorite(movie) }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_remove),
-                        contentDescription = stringResource(R.string.remove_from_favorites_button)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = movie.title,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center
+        AsyncImage(
+            model = movie.posterPath,
+            contentDescription = movie.title,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit
         )
     }
+}
+
+
+@Composable
+private fun AppName() {
+    Text(
+        text = "Movi3 Arch1ve",
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        style = TextStyle(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
+                )
+            )
+        )
+    )
 }
 
 @Composable
@@ -194,18 +190,18 @@ fun EmptyListView(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Parchment),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(25.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
-                model = R.drawable.ic_sad,
+            Icon(
+                painter = painterResource(R.drawable.ic_sad),
                 contentDescription = stringResource(R.string.empty_list_screen),
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(120.dp),
+                tint = Color.White.copy(alpha = 0.5f)
             )
 
             Text(
@@ -215,8 +211,8 @@ fun EmptyListView(
 
             Button(
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = PetalFrost,
-                    contentColor = Color.White
+                    containerColor = Color.White,
+                    contentColor = Color.Black
                 ),
                 onClick = onDiscoverClick
             ) {
@@ -224,4 +220,26 @@ fun EmptyListView(
             }
         }
     }
+}
+
+@Composable
+private fun FontFormat(
+    text: String, modifier: Modifier = Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        fontFamily = Poppins,
+        maxLines = 4,
+        overflow = TextOverflow.Ellipsis,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
+        style = TextStyle(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
+                )
+            )
+        )
+    )
 }

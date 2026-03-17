@@ -8,11 +8,15 @@ interface MovieListRepository {
 
     fun getFavorites(): Flow<List<Movie>>
 
+    fun getUpcoming(): Flow<PagingData<Movie>>
+
     fun searchMoviesPaged(query: String,
     ): Flow<PagingData<Movie>>
 
-    fun getAllMovies() : Flow<PagingData<Movie>>
+    fun getPopularMovies() : Flow<PagingData<Movie>>
 
+    fun getNowPlaying(): Flow<PagingData<Movie>>
+    fun getTopRated(): Flow<PagingData<Movie>>
 }
 
 

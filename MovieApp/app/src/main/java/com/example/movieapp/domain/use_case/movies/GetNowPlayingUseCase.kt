@@ -3,8 +3,8 @@ package com.example.movieapp.domain.use_case.movies
 import com.example.movieapp.domain.repository.MovieListRepository
 import javax.inject.Inject
 
-class GetPopularUseCase @Inject constructor(
+class GetNowPlayingUseCase @Inject constructor(
     private val movierepo : MovieListRepository
 ){
-    operator fun invoke() = movierepo.getPopularMovies()
+    operator fun invoke() = movierepo.getNowPlaying()
 }

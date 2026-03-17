@@ -28,13 +28,43 @@ class MovieListRepositoryImplementation @Inject constructor(
         }
     }
 
-    override  fun getAllMovies(): Flow<PagingData<Movie>> {
+    override fun getUpcoming(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = MAX_ITEMS,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            pagingSourceFactory = { MovieDataPagingSource(movieAPI, "", Category.UPCOMING) }
+        ).flow
+    }
+
+    override fun getNowPlaying(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = MAX_ITEMS,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            pagingSourceFactory = { MovieDataPagingSource(movieAPI, "", Category.NOWPLAYING) }
+        ).flow
+    }
+
+    override fun getTopRated(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = MAX_ITEMS,
+                prefetchDistance = PREFETCH_ITEMS
+            ),
+            pagingSourceFactory = { MovieDataPagingSource(movieAPI, "", Category.TOPRATED) }
+        ).flow
+    }
+
+    override  fun getPopularMovies(): Flow<PagingData<Movie>> {
        return Pager(
            config = PagingConfig(
                pageSize = MAX_ITEMS,
                prefetchDistance = PREFETCH_ITEMS
            ),
-           pagingSourceFactory = { MovieDataPagingSource(movieAPI, "") }
+           pagingSourceFactory = { MovieDataPagingSource(movieAPI, "", Category.POPULAR) }
        ).flow
     }
 
@@ -43,12 +73,12 @@ class MovieListRepositoryImplementation @Inject constructor(
     ): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(MAX_ITEMS),
-            pagingSourceFactory = { MovieDataPagingSource(movieAPI, query) }
+            pagingSourceFactory = { MovieDataPagingSource(movieAPI, query, "") }
         ).flow
     }
 
     private companion object {
         const val MAX_ITEMS = 20
-        const val PREFETCH_ITEMS = 3
+        const val PREFETCH_ITEMS = 5
     }
 }

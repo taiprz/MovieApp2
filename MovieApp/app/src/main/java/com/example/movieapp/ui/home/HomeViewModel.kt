@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.domain.use_case.movies.GetNowPlayingUseCase
 import com.example.movieapp.domain.use_case.movies.GetPopularUseCase
+import com.example.movieapp.domain.use_case.movies.GetTopRatedUseCase
+import com.example.movieapp.domain.use_case.movies.GetUpcomingUseCase
 import com.example.movieapp.domain.use_case.movies.SearchMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -19,9 +22,14 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getPopular: GetPopularUseCase,
-    private val searchMovie: SearchMovieUseCase
+    getUpcoming : GetUpcomingUseCase,
+    getNowPlaying: GetNowPlayingUseCase,
+    getTopRated: GetTopRatedUseCase
 ) : ViewModel() {
+    val popularMovies = getPopular()
+    val upcomingMovies = getUpcoming()
 
-    val movies = getPopular()
+    val nowPlayingMovies = getNowPlaying()
 
+    val topRatedMovies = getTopRated()
 }

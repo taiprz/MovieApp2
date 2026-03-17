@@ -1,26 +1,22 @@
 package com.example.movieapp.ui.home
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberOverscrollEffect
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -35,44 +31,46 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.ui.navigation.BottomNavigationBar
-import com.example.movieapp.ui.theme.DustGrey
 import com.example.movieapp.ui.theme.Poppins
-import dev.chrisbanes.haze.HazeState
 
 @Composable
 fun HomeView(
     homeViewModel: HomeViewModel = hiltViewModel(),
     onMovieClick: (Movie) -> Unit,
 ) {
-
-    val movies = homeViewModel.movies.collectAsLazyPagingItems()
+    val popularMovies = homeViewModel.popularMovies.collectAsLazyPagingItems()
+    val upcomingMovies = homeViewModel.upcomingMovies.collectAsLazyPagingItems()
+    val topRatedMovies = homeViewModel.topRatedMovies.collectAsLazyPagingItems()
+    val nowPlaying = homeViewModel.nowPlayingMovies.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
 
         AppName()
 
         Popular()
+        MovieList(movies = popularMovies, onMovieClick = onMovieClick)
 
-        MovieList(
-            movies = movies,
-            onMovieClick = onMovieClick
-        )
+        Upcoming()
+        MovieList(movies = upcomingMovies, onMovieClick = onMovieClick)
+
+        TopRated()
+        MovieList(movies = topRatedMovies, onMovieClick = onMovieClick)
+
+        NowPlaying()
+        MovieList(movies = nowPlaying, onMovieClick = onMovieClick)
     }
 }
 
-
 @Composable
 fun MovieList(
-    movies: LazyPagingItems<Movie>,
-    onMovieClick: (Movie) -> Unit
+    movies: LazyPagingItems<Movie>, onMovieClick: (Movie) -> Unit
 ) {
-
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 20.dp),
@@ -80,27 +78,19 @@ fun MovieList(
     ) {
 
         items(movies.itemCount) { index ->
-
             movies[index]?.let { movie ->
-
                 MovieItem(
-                    movie = movie,
-                    onMovieClick = onMovieClick
+                    movie = movie, onMovieClick = onMovieClick
                 )
-
             }
-
         }
-
     }
 }
 
 @Composable
 fun MovieItem(
-    movie: Movie,
-    onMovieClick: (Movie) -> Unit
+    movie: Movie, onMovieClick: (Movie) -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .width(150.dp)
@@ -108,8 +98,8 @@ fun MovieItem(
             .clickable { onMovieClick(movie) },
         shape = RoundedCornerShape(18.dp),
         elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-
+    )
+    {
         AsyncImage(
             model = movie.posterPath,
             contentDescription = movie.title,
@@ -143,17 +133,15 @@ fun Background() {
         Popular()
         MoviesList()
 //        MovieItemPrv()
-
+        Upcoming()
     }
 }
 
 @Composable
 private fun AppName() {
-
     Text(
         text = "Movi3 Arch1ve",
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         fontFamily = Poppins,
         fontWeight = FontWeight.Bold,
@@ -161,9 +149,7 @@ private fun AppName() {
         style = TextStyle(
             brush = Brush.linearGradient(
                 colors = listOf(
-                    Color(0xff838E83),
-                    Color(0xFFf9b5ac),
-                    Color(0xFF564787)
+                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
                 )
             )
         )
@@ -171,8 +157,7 @@ private fun AppName() {
 }
 
 @Composable
-private fun Popular() {
-
+fun Popular() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,12 +165,7 @@ private fun Popular() {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Text(
-            text = "Popular",
-            fontFamily = Poppins,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 20.sp
-        )
+        FontFormat("Popular")
 
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -198,6 +178,69 @@ private fun Popular() {
 }
 
 @Composable
+fun Upcoming() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        FontFormat("Upcoming")
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.ic_coming),
+            contentDescription = "Uncoming movies",
+            modifier = Modifier.size(18.dp)
+        )
+    }
+}
+
+@Composable
+fun TopRated() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        FontFormat("Top Rated")
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.ic_top_rated),
+            contentDescription = "Uncoming movies",
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+fun NowPlaying() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        FontFormat("Now Playing")
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.ic_play),
+            contentDescription = "Now Playing",
+            modifier = Modifier.size(12.dp)
+        )
+    }
+}
+
+@Composable
 private fun FontFormat(
     text: String, modifier: Modifier = Modifier
 ) {
@@ -205,17 +248,8 @@ private fun FontFormat(
         modifier = modifier,
         text = text,
         fontFamily = Poppins,
-        maxLines = 4,
-        overflow = TextOverflow.Ellipsis,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        style = TextStyle(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
-                )
-            )
-        )
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold
     )
 }
 
@@ -236,11 +270,10 @@ fun MoviesList() {
             video = false,
             voteAverage = 8.3,
             voteCount = 22186,
-            genreIds = listOf("28","878","12"),
+            genreIds = listOf("28", "878", "12"),
             releaseDate = "2010-07-16",
             category = "Popular"
-        ),
-        Movie(
+        ), Movie(
             id = 2,
             title = "The Matrix",
             originalTitle = "The Matrix",
@@ -253,15 +286,14 @@ fun MoviesList() {
             video = false,
             voteAverage = 8.1,
             voteCount = 19730,
-            genreIds = listOf("28","878"),
+            genreIds = listOf("28", "878"),
             releaseDate = "1999-03-31",
             category = "Popular"
         )
     )
 
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(sampleMovies) { movie ->
             MovieItem(movie = movie, onMovieClick = {})
@@ -285,7 +317,9 @@ fun MovieItemPrv() {
                 ), shape = RoundedCornerShape(16.dp)
             )
             .aspectRatio(2 / 1f), shape = RoundedCornerShape(16.dp)
-    ) {}
+    )
+    {
+    }
 }
 
 

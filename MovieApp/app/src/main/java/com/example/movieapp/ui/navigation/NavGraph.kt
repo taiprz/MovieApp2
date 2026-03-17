@@ -20,7 +20,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.movieapp.data.utils.Route
 import com.example.movieapp.data.utils.Route.Home
 import com.example.movieapp.ui.details.DetailViewModel
-import com.example.movieapp.ui.details.DetailsView
 import com.example.movieapp.ui.favorites.FavoritesView
 import com.example.movieapp.ui.home.HomeView
 import com.example.movieapp.ui.search.SearchScreen
@@ -31,25 +30,39 @@ import dev.chrisbanes.haze.hazeChild
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.movieapp.ui.details.DetailsView
 
 @Composable
-fun BottomNavigationBar(
+fun BottomBar(
     hazeState: HazeState,
+    currentRoute: Route?, // ahora usamos Route directamente
     onHomeClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onSearchClick: () -> Unit
 ) {
+
+    fun iconColor(isSelected: Boolean): Color =
+        if (isSelected) Color.White.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.5f)
+
+    val isHomeSelected = currentRoute is Home
+    val isSearchSelected = currentRoute is Route.Search
+    val isFavSelected = currentRoute is Route.Favorites
+
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .fillMaxWidth()
             .height(70.dp)
-            .hazeChild(state = hazeState, shape = CircleShape)
+            .hazeChild(
+                state = hazeState,
+                shape = CircleShape
+            )
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color.White.copy(alpha = 0.01f),
-                        Color.White.copy(alpha = 0.01f)
+                        Color.White.copy(alpha = 0.05f),
+                        Color.White.copy(alpha = 0.02f)
                     )
                 ),
                 shape = CircleShape
@@ -58,7 +71,7 @@ fun BottomNavigationBar(
                 width = 1.dp,
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color.White.copy(alpha = 0.8f),
+                        Color.White.copy(alpha = 0.6f),
                         Color.White.copy(alpha = 0.2f)
                     )
                 ),
@@ -66,16 +79,20 @@ fun BottomNavigationBar(
             ),
         contentAlignment = Alignment.Center
     ) {
+
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+
             IconButton(onClick = onHomeClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_home),
                     contentDescription = "Home",
-                    tint = Color(0xFF564787)
+                    tint = iconColor(isHomeSelected),
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
@@ -83,7 +100,8 @@ fun BottomNavigationBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_magnifying_glass),
                     contentDescription = "Search",
-                    tint = Color(0xFFf9b5ac)
+                    tint = iconColor(isSearchSelected),
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
@@ -91,7 +109,8 @@ fun BottomNavigationBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_heart),
                     contentDescription = "Favorites",
-                    tint = Color(0xFFf9b5ac)
+                    tint = iconColor(isFavSelected),
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
@@ -103,6 +122,8 @@ fun MainScaffoldNavigation() {
 
     val backStack = rememberNavBackStack(Home)
     val hazeState = remember { HazeState() }
+
+    val currentEntry = backStack.lastOrNull()
 
     Box(
         modifier = Modifier
@@ -123,8 +144,9 @@ fun MainScaffoldNavigation() {
         Scaffold(
             containerColor = Color.Transparent,
             bottomBar = {
-                BottomNavigationBar(
+                BottomBar(
                     hazeState = hazeState,
+                    currentRoute = currentEntry as Route,
                     onHomeClick = { backStack.add(Home) },
                     onFavoritesClick = { backStack.add(Route.Favorites) },
                     onSearchClick = { backStack.add(Route.Search) }
@@ -152,8 +174,7 @@ fun MainScaffoldNavigation() {
                             HomeView(
                                 onMovieClick = {
                                     backStack.add(Route.Details(it.id))
-                                }
-                            )
+                                })
                         }
 
                         is Route.Details -> NavEntry(key) {
@@ -168,26 +189,15 @@ fun MainScaffoldNavigation() {
 
                         is Route.Favorites -> NavEntry(key) {
                             FavoritesView(
-                                onMovieClick = {
-                                    backStack.add(Route.Details(it.id))
-                                },
-                                onDiscoverClick = {
-                                    backStack.removeLastOrNull()
-                                },
-                                onSearchClick = {
-                                    backStack.add(Route.Search)
-                                }
+                                onMovieClick = { backStack.add(Route.Details(it.id)) },
+                                onDiscoverClick = { backStack.removeLastOrNull() }
                             )
                         }
 
                         is Route.Search -> NavEntry(key) {
                             SearchScreen(
-                                onMovieClick = {
-                                    backStack.add(Route.Details(it.id))
-                                },
-                                onDiscoverClick = {
-                                    backStack.removeLastOrNull()
-                                }
+                                onMovieClick = { backStack.add(Route.Details(it.id)) },
+                                onDiscoverClick = { backStack.removeLastOrNull() }
                             )
                         }
 
@@ -197,4 +207,19 @@ fun MainScaffoldNavigation() {
             )
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun BottomBarPreview() {
+    val hazeState = remember { HazeState() }
+
+    BottomBar(
+        hazeState = hazeState,
+        currentRoute = Home,
+        onHomeClick = {},
+        onFavoritesClick = {},
+        onSearchClick = {}
+    )
 }
