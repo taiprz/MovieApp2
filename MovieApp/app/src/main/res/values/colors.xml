@@ -10,5 +10,8 @@
     <color name ="lavanda">#FF9588AD</color>
     <color name ="beige">#E8DFD4</color>
     <color name="orange">#C8562F</color>
-
+    <color name="dark_pink">#FFee7674</color>
+    <color name="ash">#d0d6b5</color>
+    <color name="green">#9dbf9e</color>
+    <color name="purple">#987284</color>
 </resources>

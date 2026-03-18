@@ -112,7 +112,7 @@ fun DetailsViewContent(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_calendar),
-                    contentDescription = "Release Date",
+                    contentDescription = stringResource(R.string.release_date),
                     modifier = Modifier.size(18.dp)
                 )
 
@@ -120,13 +120,13 @@ fun DetailsViewContent(
 
                 Icon(
                     painter = painterResource(R.drawable.ic_star),
-                    contentDescription = "Popularity",
+                    contentDescription = stringResource(R.string.popularity),
                     tint = Color(0xFFFFD700),
                     modifier = Modifier.size(18.dp)
                 )
 
                 if (movie.voteAverage == 0.0) {
-                    Text("Unavailable")
+                    Text(stringResource(R.string.unavailable))
                 } else {
                     Text("${movie.voteAverage}")
                 }
@@ -145,34 +145,6 @@ fun DetailsViewContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = movie.originalLanguage,
-                    fontFamily = Poppins,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier
-                        .padding(12.dp)
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier
-                        .size(8.dp)
-                )
-
-                Text(
-                    text = movie.originalTitle,
-                    fontFamily = Poppins,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier
-                        .padding(12.dp)
-                )
-            }
         }
     }
 }
@@ -189,13 +161,13 @@ fun BackButton(onClick: () -> Unit) {
     }
 }
 
+
 @Composable
 fun FavoriteButton(
     isFavorite: Boolean,
     onAddFavorite: () -> Unit,
     onRemoveFavorite: () -> Unit
-)
-{
+) {
     var showDialog by remember { mutableStateOf(false) }
     val iconTint = if (isFavorite) Color.White else Color.White.copy(alpha = 0.5f)
 

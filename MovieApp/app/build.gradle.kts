@@ -7,9 +7,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
-
-
-
 }
 
 android {
@@ -23,7 +20,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
+        vectorDrawables.useSupportLibrary = true
         // apikey saved
         val keystoreFile = project.rootProject.file("apikey.properties")
         val properties = Properties()
@@ -95,6 +92,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -141,5 +139,5 @@ dependencies {
     // design UI
 
     implementation(libs.haze.jetpack.compose)
-
+    implementation(libs.material)
 }

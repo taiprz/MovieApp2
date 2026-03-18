@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.MovieApp" parent="android:Theme.Material.Light.NoActionBar" />
-    <style name="Theme.MovieSplashScreen" parent="Theme.SplashScreen" />
+    <style name="Theme.NoSystemSplash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/green</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
 </resources>

@@ -22,4 +22,18 @@
     <string name="delete">Delete</string>
     <string name="popular_tab">Popular Tab</string>
     <string name="favorite_tab">Favorite Tab</string>
+    <string name="upcoming_movies">Upcoming movies</string>
+    <string name="popular">Popular</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="movi3_arch1ve">Movi3 Arch1ve</string>
+    <string name="search_movies">Search Movies</string>
+    <string name="type_something_to_search_a_movie">Type something to search a movie.</string>
+    <string name="enter_movie_title">Enter movie title</string>
+    <string name="no_matches_found">"No matches found... "</string>
+    <string name="error">Error</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="popularity">Popularity</string>
+    <string name="release_date">Release Date</string>
 </resources>

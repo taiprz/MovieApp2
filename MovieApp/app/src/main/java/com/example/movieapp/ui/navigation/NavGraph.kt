@@ -36,7 +36,7 @@ import com.example.movieapp.ui.details.DetailsView
 @Composable
 fun BottomBar(
     hazeState: HazeState,
-    currentRoute: Route?, // ahora usamos Route directamente
+    currentRoute: Route?,
     onHomeClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onSearchClick: () -> Unit
@@ -190,17 +190,15 @@ fun MainScaffoldNavigation() {
                         is Route.Favorites -> NavEntry(key) {
                             FavoritesView(
                                 onMovieClick = { backStack.add(Route.Details(it.id)) },
-                                onDiscoverClick = { backStack.removeLastOrNull() }
+                                onDiscoverClick = { backStack.add(Home) }
                             )
                         }
 
                         is Route.Search -> NavEntry(key) {
                             SearchScreen(
                                 onMovieClick = { backStack.add(Route.Details(it.id)) },
-                                onDiscoverClick = { backStack.removeLastOrNull() }
                             )
                         }
-
                         else -> NavEntry(key) {}
                     }
                 }
@@ -214,7 +212,6 @@ fun MainScaffoldNavigation() {
 @Composable
 fun BottomBarPreview() {
     val hazeState = remember { HazeState() }
-
     BottomBar(
         hazeState = hazeState,
         currentRoute = Home,

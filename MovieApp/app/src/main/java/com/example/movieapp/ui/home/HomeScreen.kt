@@ -19,18 +19,20 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.ui.components.shimmer.ShimmerMovieRow
 import com.example.movieapp.ui.theme.Poppins
 
 @Composable
@@ -48,23 +50,52 @@ fun HomeView(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(32.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-
         AppName()
 
-        Popular()
-        MovieList(movies = popularMovies, onMovieClick = onMovieClick)
-
-        Upcoming()
-        MovieList(movies = upcomingMovies, onMovieClick = onMovieClick)
-
-        TopRated()
-        MovieList(movies = topRatedMovies, onMovieClick = onMovieClick)
-
-        NowPlaying()
-        MovieList(movies = nowPlaying, onMovieClick = onMovieClick)
+        MovieSection(stringResource(R.string.popular), R.drawable.ic_star, popularMovies, onMovieClick)
+        MovieSection(stringResource(R.string.upcoming), R.drawable.ic_coming, upcomingMovies, onMovieClick)
+        MovieSection(stringResource(R.string.top_rated), R.drawable.ic_top_rated, topRatedMovies, onMovieClick)
+        MovieSection(stringResource(R.string.now_playing), R.drawable.ic_play, nowPlaying, onMovieClick)
     }
+}
+
+
+@Composable
+fun MovieSection(
+    title: String,
+    iconRes: Int,
+    movies: LazyPagingItems<Movie>,
+    onMovieClick: (Movie) -> Unit
+) {
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FontFormat(title)
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = title,
+            modifier = Modifier.size(18.dp)
+        )
+    }
+
+
+    val isLoading = movies.loadState.refresh is LoadState.Loading
+    val isEmpty = movies.itemCount == 0
+
+    if (isLoading || isEmpty) {
+        ShimmerMovieRow()
+    } else {
+        MovieList(movies = movies, onMovieClick = onMovieClick)
+    }
+
+//    Spacer(modifier = Modifier.height(12.dp))
 }
 
 @Composable
@@ -130,17 +161,16 @@ fun Background() {
     ) {
 
         AppName()
-        Popular()
         MoviesList()
 //        MovieItemPrv()
-        Upcoming()
+
     }
 }
 
 @Composable
 private fun AppName() {
     Text(
-        text = "Movi3 Arch1ve",
+        text = stringResource(R.string.movi3_arch1ve),
         modifier = Modifier.fillMaxWidth(),
         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         fontFamily = Poppins,
@@ -154,90 +184,6 @@ private fun AppName() {
             )
         )
     )
-}
-
-@Composable
-fun Popular() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        FontFormat("Popular")
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            painter = painterResource(R.drawable.ic_star),
-            contentDescription = "Popular icon",
-            modifier = Modifier.size(18.dp)
-        )
-    }
-}
-
-@Composable
-fun Upcoming() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        FontFormat("Upcoming")
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            painter = painterResource(R.drawable.ic_coming),
-            contentDescription = "Uncoming movies",
-            modifier = Modifier.size(18.dp)
-        )
-    }
-}
-
-@Composable
-fun TopRated() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        FontFormat("Top Rated")
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            painter = painterResource(R.drawable.ic_top_rated),
-            contentDescription = "Uncoming movies",
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}
-
-@Composable
-fun NowPlaying() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        FontFormat("Now Playing")
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            painter = painterResource(R.drawable.ic_play),
-            contentDescription = "Now Playing",
-            modifier = Modifier.size(12.dp)
-        )
-    }
 }
 
 @Composable

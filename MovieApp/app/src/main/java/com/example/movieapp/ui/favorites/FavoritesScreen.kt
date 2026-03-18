@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -91,7 +92,7 @@ fun Header(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        FontFormat("Your Favorites")
+        FontFormat(stringResource(R.string.your_favorites))
 
         if (movies.isNotEmpty()) {
             EditButton(editMode, onEditClick)
@@ -148,19 +149,45 @@ private fun FavoriteMovieItem(
     poster: String,
     onRemoveFavorite: (Movie) -> Unit
 ) {
-    Card(
+    Box(
         modifier = Modifier
             .width(150.dp)
             .aspectRatio(2f / 3f)
-            .clickable { onMovieClick(movie) },
-        elevation = CardDefaults.cardElevation(4.dp)
+            .clickable { onMovieClick(movie) }
     ) {
-        AsyncImage(
-            model = movie.posterPath,
-            contentDescription = movie.title,
+        Card(
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
-        )
+            elevation = CardDefaults.cardElevation(4.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            AsyncImage(
+                model = poster,
+                contentDescription = movie.title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        if (editMode) {
+            IconButton(
+                onClick = { onRemoveFavorite(movie) },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp)
+                    .size(24.dp)
+                    .background(
+                        color = Color.Transparent,
+                        shape = RoundedCornerShape(50)
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_remove),
+                    contentDescription = "Remove Favorite",
+                    tint = Color.Red,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
     }
 }
 
@@ -168,7 +195,7 @@ private fun FavoriteMovieItem(
 @Composable
 private fun AppName() {
     Text(
-        text = "Movi3 Arch1ve",
+        text = stringResource(R.string.movi3_arch1ve),
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
         fontFamily = Poppins,
@@ -201,7 +228,7 @@ fun EmptyListView(
                 painter = painterResource(R.drawable.ic_sad),
                 contentDescription = stringResource(R.string.empty_list_screen),
                 modifier = Modifier.size(120.dp),
-                tint = Color.White.copy(alpha = 0.5f)
+                tint = Color.White.copy(alpha = 8f)
             )
 
             Text(

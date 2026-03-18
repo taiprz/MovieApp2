@@ -16,7 +16,6 @@ val PetalFrost = Color(0xFFCBAA7A)
 val Parchment = Color(0xFFEFEBE7)
 
 val DarkPink = Color(0xFFee7674)
-val LightPink = Color(0xFFf9b5ac)
 val Ash = Color(0xFFd0d6b5)
 val Green = Color(0xff9dbf9e)
 val Purple = Color(0xff987284)
