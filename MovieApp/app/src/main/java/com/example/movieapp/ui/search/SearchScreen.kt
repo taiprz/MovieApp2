@@ -1,5 +1,6 @@
 package com.example.movieapp.ui.search
 
+import android.widget.ProgressBar
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -60,7 +61,12 @@ import com.example.movieapp.ui.theme.Poppins
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
 import androidx.paging.LoadState
+import androidx.paging.PagingData
+import com.example.movieapp.ui.components.font.AppName
+import com.example.movieapp.ui.components.font.FontFormat
+import com.example.movieapp.ui.components.movieitem.MovieItem
 import com.example.movieapp.ui.components.shimmer.ShimmerMovieGrid
+import kotlinx.coroutines.flow.flowOf
 
 
 @Composable
@@ -72,6 +78,26 @@ fun SearchScreen(
     val hasSearched by searchViewModel.hasSearched.collectAsState()
     val movies = searchViewModel.moviesFound.collectAsLazyPagingItems()
 
+    SearchScreenContent(
+        searchText = searchText,
+        hasSearched = hasSearched,
+        movies = movies,
+        onSearchTextChange = { text ->
+            searchText = text
+            searchViewModel.onEvent(MovieListEvents.Search(text))
+        },
+        onMovieClick = onMovieClick
+    )
+}
+
+@Composable
+fun SearchScreenContent(
+    searchText: String,
+    hasSearched: Boolean,
+    movies: LazyPagingItems<Movie>,
+    onSearchTextChange: (String) -> Unit,
+    onMovieClick: (Movie) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,16 +105,16 @@ fun SearchScreen(
     ) {
 
         AppName()
+
         Spacer(modifier = Modifier.height(12.dp))
+
         FontFormat(stringResource(R.string.search_movies))
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Searchbar(
             searchText = searchText,
-            onSearchTextChange = { text ->
-                searchText = text
-                searchViewModel.onEvent(MovieListEvents.Search(text))
-            }
+            onSearchTextChange = onSearchTextChange
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -103,7 +129,7 @@ fun SearchScreen(
                 }
             }
 
-            movies.loadState.refresh is LoadState.Loading || movies.itemCount == 0 -> {
+            movies.loadState.refresh is LoadState.Loading -> {
                 ShimmerMovieGrid()
             }
 
@@ -112,7 +138,10 @@ fun SearchScreen(
             }
 
             else -> {
-                SearchMovieList(movies = movies, onMovieClick = onMovieClick)
+                SearchMovieList(
+                    movies = movies,
+                    onMovieClick = onMovieClick
+                )
             }
         }
     }
@@ -184,86 +213,10 @@ fun SearchMovieList(
     ) {
         items(movies.itemCount) { index ->
             movies[index]?.let { movie ->
-                SearchMovieItem(movie = movie, onMovieClick = onMovieClick)
+                MovieItem(movie = movie, onMovieClick = onMovieClick)
             }
         }
     }
-}
-
-@Composable
-private fun SearchMovieList2(
-    movies: List<Movie>,
-    onMovieClick: (Movie) -> Unit
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(12.dp)
-    ) {
-        items(movies) { movie ->
-            SearchMovieItem(
-                movie = movie,
-                onMovieClick = onMovieClick
-            )
-        }
-    }
-}
-
-
-@Composable
-fun SearchMovieItem(
-    movie: Movie,
-    onMovieClick: (Movie) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .width(150.dp)
-            .aspectRatio(2f / 3f)
-            .clickable { onMovieClick(movie) },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
-    ) {
-        AsyncImage(
-            model = movie.posterPath,
-            placeholder = painterResource(R.drawable.ic_no_image),
-            error = painterResource(R.drawable.ic_no_image),
-            contentDescription = movie.title,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-@Composable
-private fun AppName() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        FontFormat(stringResource(R.string.movi3_arch1ve))
-    }
-}
-
-@Composable
-private fun FontFormat(
-    text: String, modifier: Modifier = Modifier
-) {
-    Text(
-        modifier = modifier,
-        text = text,
-        fontFamily = Poppins,
-        maxLines = 4,
-        overflow = TextOverflow.Ellipsis,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold,
-        style = TextStyle(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
-                )
-            )
-        )
-    )
 }
 
 @Composable
@@ -285,108 +238,41 @@ fun NoMatches() {
     }
 }
 
-@Preview
-@Composable
-fun Background() {
+    @Preview(showBackground = true)
+    @Composable
+    fun SearchScreenPreview() {
 
-    val sampleMovies: List<Movie> = listOf(
-        Movie(
-            id = 1,
-            title = "Inception",
-            originalTitle = "Inception",
-            originalLanguage = "en",
-            overview = "",
-            popularity = 82.3,
-            posterPath = "https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg",
-            backdropPath = "",
-            adult = false,
-            video = false,
-            voteAverage = 8.3,
-            voteCount = 22186,
-            genreIds = listOf("28", "878", "12"),
-            releaseDate = "2010-07-16",
-            category = "Popular"
-        ),
-        Movie(
-            id = 2,
-            title = "The Matrix",
-            originalTitle = "The Matrix",
-            originalLanguage = "en",
-            overview = "",
-            popularity = 77.5,
-            posterPath = "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-            backdropPath = "",
-            adult = false,
-            video = false,
-            voteAverage = 8.1,
-            voteCount = 19730,
-            genreIds = listOf("28", "878"),
-            releaseDate = "1999-03-31",
-            category = "Popular"
-        )
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White,
-                        Color(0xFFf9b5ac),
-                        Color(0xFFd0d6b5),
-                        Color(0xff9dbf9e),
-                        Color(0xff987284)
-                    )
-                )
+        val fakeMovies = listOf(1..6).map {
+            Movie(
+                id = 1,
+                title = "Movie",
+                originalTitle = "Movie",
+                originalLanguage = "en",
+                overview = "",
+                popularity = 80.0,
+                posterPath = "https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg",
+                backdropPath = "",
+                adult = false,
+                video = false,
+                voteAverage = 8.0,
+                voteCount = 1000,
+                genreIds = listOf("28"),
+                releaseDate = "2020-01-01",
+                category = "Popular"
             )
-            .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+        }
 
-        AppName()
-        Searchbar("Text") {}
+        val fakePaging = flowOf(PagingData.from(fakeMovies)).collectAsLazyPagingItems()
 
-        SearchMovieList2(sampleMovies, onMovieClick = {})
-
-        NoMatches()
-
-//        val sampleMovies =
-//            listOf<Movie>(
-//                id = 1,
-//                title = "Inception",
-//                originalTitle = "Inception",
-//                originalLanguage = "en",
-//                overview = "",
-//                popularity = 82.3,
-//                posterPath = "https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg",
-//                backdropPath = "",
-//                adult = false,
-//                video = false,
-//                voteAverage = 8.3,
-//                voteCount = 22186,
-//                genreIds = listOf("28", "878", "12"),
-//                releaseDate = "2010-07-16",
-//                category = "Popular"
-//            )
-//        Movie(
-//            id = 2,
-//            title = "The Matrix",
-//            originalTitle = "The Matrix",
-//            originalLanguage = "en",
-//            overview = "",
-//            popularity = 77.5,
-//            posterPath = "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-//            backdropPath = "",
-//            adult = false,
-//            video = false,
-//            voteAverage = 8.1,
-//            voteCount = 19730,
-//            genreIds = listOf("28", "878"),
-//            releaseDate = "1999-03-31",
-//            category = "Popular"
-//        )
+        SearchScreenContent(
+            searchText = "Batman",
+            hasSearched = true,
+            movies = fakePaging,
+            onSearchTextChange = {},
+            onMovieClick = {}
+        )
     }
-}
+
 
 
 

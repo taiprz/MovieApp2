@@ -1,15 +1,13 @@
 package com.example.movieapp.data.services
 
 import com.example.movieapp.data.dto.MovieDTO
-import com.example.movieapp.DTOs.MovieListDTO
+import com.example.movieapp.data.dto.MovieListDTO
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 
 interface MovieAPI {
-
-    // api queries
     @GET("movie/{category}")
     suspend fun getMoviesList(
         @Path("category") category: String,

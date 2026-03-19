@@ -2,8 +2,9 @@ package com.example.movieapp.ui.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movieapp.data.utils.Result
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.data.utils.Resource
+//import com.example.movieapp.data.utils.Resource
 import com.example.movieapp.domain.use_case.favorites.AddFavoriteUseCase
 import com.example.movieapp.domain.use_case.favorites.IsMovieFavoriteUseCase
 import com.example.movieapp.domain.use_case.favorites.RemoveFavoriteUseCase
@@ -30,17 +31,17 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             getMovieDetail(id).collect { result ->
                 when (result) {
-                    is Resource.Loading -> _detailState.update {
+                    is Result.Loading -> _detailState.update {
                         it.copy(isLoading = true)
                     }
-                    is Resource.Success -> _detailState.update {
+                    is Result.Success -> _detailState.update {
                         it.copy(
                             isLoading = false,
                             movie = result.data,
                             isFavorite = isMovieFavorite(id)
                         )
                     }
-                    is Resource.Error -> _detailState.update {
+                    is Result.Error -> _detailState.update {
                         it.copy(isLoading = false)
                     }
                 }

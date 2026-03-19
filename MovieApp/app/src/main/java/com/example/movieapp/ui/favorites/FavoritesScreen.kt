@@ -13,23 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.ui.theme.Poppins
+import com.example.movieapp.ui.components.font.AppName
+import com.example.movieapp.ui.components.font.FontFormat
 
 @Composable
 fun FavoritesView(
@@ -59,12 +55,6 @@ fun FavoritesView(
         Spacer(modifier = Modifier.height(16.dp))
 
         when {
-            favMoviesState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-
             favMoviesState.favoriteMovieList.isEmpty() -> {
                 EmptyListView(onDiscoverClick = onDiscoverClick)
             }
@@ -191,26 +181,6 @@ private fun FavoriteMovieItem(
     }
 }
 
-
-@Composable
-private fun AppName() {
-    Text(
-        text = stringResource(R.string.movi3_arch1ve),
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        fontFamily = Poppins,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        style = TextStyle(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
-                )
-            )
-        )
-    )
-}
-
 @Composable
 fun EmptyListView(
     onDiscoverClick: () -> Unit
@@ -247,26 +217,4 @@ fun EmptyListView(
             }
         }
     }
-}
-
-@Composable
-private fun FontFormat(
-    text: String, modifier: Modifier = Modifier
-) {
-    Text(
-        modifier = modifier,
-        text = text,
-        fontFamily = Poppins,
-        maxLines = 4,
-        overflow = TextOverflow.Ellipsis,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold,
-        style = TextStyle(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
-                )
-            )
-        )
-    )
 }

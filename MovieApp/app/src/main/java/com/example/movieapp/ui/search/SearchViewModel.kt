@@ -32,7 +32,7 @@ class SearchViewModel @Inject constructor(
     val hasSearched = _hasSearched.asStateFlow()
     @OptIn(FlowPreview::class)
     val moviesFound = _searchText
-        .debounce(500)
+        .debounce(1000)
         .distinctUntilChanged()
         .flatMapLatest { query ->
             _hasSearched.value = query.isNotBlank()

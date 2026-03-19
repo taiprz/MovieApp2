@@ -1,18 +1,12 @@
 package com.example.movieapp.data.source
 
-import android.R
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.movieapp.data.utils.Category
-import com.example.movieapp.data.utils.toMovie
+import com.example.movieapp.data.mappers.toMovie
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.data.services.MovieAPI
-import okio.IOException
-import javax.inject.Inject
 
 
-// we remove the injection because Hilt/Dagger needs to be able to create whatever
-// we pass in the constructor, however since query is dynamic, is not able to create it
 class MovieDataPagingSource(
     private val api: MovieAPI,
     private val query: String,

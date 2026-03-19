@@ -4,9 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.data.local.entities.MovieEntity
-
-
-// database where movies are stored
 @Database (
     entities = [MovieEntity::class],
     version = 1

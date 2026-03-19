@@ -1,39 +1,30 @@
 package com.example.movieapp.ui.home
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.domain.model.Movie
+import com.example.movieapp.ui.components.font.AppName
+import com.example.movieapp.ui.components.font.FontFormat
+import com.example.movieapp.ui.components.movieitem.MovieItem
 import com.example.movieapp.ui.components.shimmer.ShimmerMovieRow
-import com.example.movieapp.ui.theme.Poppins
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun HomeView(
@@ -45,6 +36,23 @@ fun HomeView(
     val topRatedMovies = homeViewModel.topRatedMovies.collectAsLazyPagingItems()
     val nowPlaying = homeViewModel.nowPlayingMovies.collectAsLazyPagingItems()
 
+    HomeViewContent(
+        popularMovies = popularMovies,
+        upcomingMovies = upcomingMovies,
+        topRatedMovies = topRatedMovies,
+        nowPlayingMovies = nowPlaying,
+        onMovieClick = onMovieClick
+    )
+}
+
+@Composable
+fun HomeViewContent(
+    popularMovies: LazyPagingItems<Movie>,
+    upcomingMovies: LazyPagingItems<Movie>,
+    topRatedMovies: LazyPagingItems<Movie>,
+    nowPlayingMovies: LazyPagingItems<Movie>,
+    onMovieClick: (Movie) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,15 +60,38 @@ fun HomeView(
             .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+
         AppName()
 
-        MovieSection(stringResource(R.string.popular), R.drawable.ic_star, popularMovies, onMovieClick)
-        MovieSection(stringResource(R.string.upcoming), R.drawable.ic_coming, upcomingMovies, onMovieClick)
-        MovieSection(stringResource(R.string.top_rated), R.drawable.ic_top_rated, topRatedMovies, onMovieClick)
-        MovieSection(stringResource(R.string.now_playing), R.drawable.ic_play, nowPlaying, onMovieClick)
+        MovieSection(
+            title = stringResource(R.string.popular),
+            iconRes = R.drawable.ic_star,
+            movies = popularMovies,
+            onMovieClick = onMovieClick
+        )
+
+        MovieSection(
+            title = stringResource(R.string.upcoming),
+            iconRes = R.drawable.ic_coming,
+            movies = upcomingMovies,
+            onMovieClick = onMovieClick
+        )
+
+        MovieSection(
+            title = stringResource(R.string.top_rated),
+            iconRes = R.drawable.ic_top_rated,
+            movies = topRatedMovies,
+            onMovieClick = onMovieClick
+        )
+
+        MovieSection(
+            title = stringResource(R.string.now_playing),
+            iconRes = R.drawable.ic_play,
+            movies = nowPlayingMovies,
+            onMovieClick = onMovieClick
+        )
     }
 }
-
 
 @Composable
 fun MovieSection(
@@ -94,8 +125,6 @@ fun MovieSection(
     } else {
         MovieList(movies = movies, onMovieClick = onMovieClick)
     }
-
-//    Spacer(modifier = Modifier.height(12.dp))
 }
 
 @Composable
@@ -118,93 +147,13 @@ fun MovieList(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun MovieItem(
-    movie: Movie, onMovieClick: (Movie) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .width(150.dp)
-            .aspectRatio(2f / 3f)
-            .clickable { onMovieClick(movie) },
-        shape = RoundedCornerShape(18.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    )
-    {
-        AsyncImage(
-            model = movie.posterPath,
-            contentDescription = movie.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
-        )
-    }
-}
+fun HomeScreenPreview() {
 
-@Preview
-@Composable
-fun Background() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White,
-                        Color(0xFFf9b5ac),
-                        Color(0xFFd0d6b5),
-                        Color(0xff9dbf9e),
-                        Color(0xff987284)
-                    )
-                )
-            )
-            .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-
-        AppName()
-        MoviesList()
-//        MovieItemPrv()
-
-    }
-}
-
-@Composable
-private fun AppName() {
-    Text(
-        text = stringResource(R.string.movi3_arch1ve),
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        fontFamily = Poppins,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        style = TextStyle(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
-                )
-            )
-        )
-    )
-}
-
-@Composable
-private fun FontFormat(
-    text: String, modifier: Modifier = Modifier
-) {
-    Text(
-        modifier = modifier,
-        text = text,
-        fontFamily = Poppins,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold
-    )
-}
-
-@Composable
-fun MoviesList() {
-
-    val sampleMovies = listOf(
+    val fakeMovies = (1..5).map {
         Movie(
-            id = 1,
+            id = it,
             title = "Inception",
             originalTitle = "Inception",
             originalLanguage = "en",
@@ -219,54 +168,22 @@ fun MoviesList() {
             genreIds = listOf("28", "878", "12"),
             releaseDate = "2010-07-16",
             category = "Popular"
-        ), Movie(
-            id = 2,
-            title = "The Matrix",
-            originalTitle = "The Matrix",
-            originalLanguage = "en",
-            overview = "",
-            popularity = 77.5,
-            posterPath = "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-            backdropPath = "",
-            adult = false,
-            video = false,
-            voteAverage = 8.1,
-            voteCount = 19730,
-            genreIds = listOf("28", "878"),
-            releaseDate = "1999-03-31",
-            category = "Popular"
         )
-    )
-
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(sampleMovies) { movie ->
-            MovieItem(movie = movie, onMovieClick = {})
-        }
     }
+
+    val fakePaging = flowOf(PagingData.from(fakeMovies)).collectAsLazyPagingItems()
+
+    HomeViewContent(
+        popularMovies = fakePaging,
+        upcomingMovies = fakePaging,
+        topRatedMovies = fakePaging,
+        nowPlayingMovies = fakePaging,
+        onMovieClick = {}
+    )
 }
 
-@Preview
-@Composable
-fun MovieItemPrv() {
-    Card(
-        modifier = Modifier
-            .border(
-                border = BorderStroke(
-                    8.dp,
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xff838E83), Color(0xFFf9b5ac), Color(0xFF564787)
-                        )
-                    ),
-                ), shape = RoundedCornerShape(16.dp)
-            )
-            .aspectRatio(2 / 1f), shape = RoundedCornerShape(16.dp)
-    )
-    {
-    }
-}
+
+
 
 
 

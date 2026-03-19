@@ -1,12 +1,12 @@
 package com.example.movieapp.domain.repository
 
 import com.example.movieapp.domain.model.Movie
-import com.example.movieapp.data.utils.Resource
+import com.example.movieapp.data.utils.Result
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
 
-    suspend fun getMovieByIdFromApi(id: Int): Flow<Resource<Movie>>
+    suspend fun getMovieByIdFromApi(id: Int): Flow<Result<Movie>>
 
     suspend fun getMovieByIdFromDB(id: Int) : Boolean
 

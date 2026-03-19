@@ -7,7 +7,7 @@ import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.source.MovieDataPagingSource
 import com.example.movieapp.data.utils.Category
-import com.example.movieapp.data.utils.toMovie
+import com.example.movieapp.data.mappers.toMovie
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.repository.MovieListRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,9 +18,6 @@ class MovieListRepositoryImplementation @Inject constructor(
     private val movieAPI : MovieAPI,
     private val movieDao : MovieDAO
 ) : MovieListRepository {
-
-    // CHANGES:
-    // removed the suspend since flow is already asynchronous:
 
     override fun getFavorites(): Flow<List<Movie>> {
         return movieDao.getFavorites().map { entities ->

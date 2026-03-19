@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,17 +21,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
 import coil.compose.AsyncImage
 import com.example.movieapp.R
+import com.example.movieapp.data.utils.Route.Home
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.ui.theme.Poppins
 
 @Composable
 fun DetailsView(
     detailsvm: DetailViewModel = hiltViewModel(),
-    backStack: NavBackStack<NavKey>
+    backStack: NavBackStack<NavKey>,
+    movieID: Int
 ) {
     val detailState by detailsvm.detailsState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        detailsvm.getMovie(movieID)
+    }
 
     detailState.movie?.let { movie ->
         val isFavorite = detailState.isFavorite
@@ -169,40 +175,78 @@ fun FavoriteButton(
     onRemoveFavorite: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    val iconTint = if (isFavorite) Color.White else Color.White.copy(alpha = 0.5f)
+
+    val iconTint = if (isFavorite) Color.White else Color.White.copy(alpha = 0.6f)
 
     IconButton(onClick = { showDialog = true }) {
         Icon(
             painter = painterResource(R.drawable.ic_heart),
             contentDescription = stringResource(R.string.favorite_button),
             tint = iconTint,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(22.dp)
         )
     }
 
     if (showDialog) {
-        val dialogTitle = if (isFavorite) stringResource(R.string.delete_movie)
-        else stringResource(R.string.save_movie)
 
-        val dialogText = if (isFavorite) stringResource(R.string.delete_from_favorites)
-        else stringResource(R.string.add_to_favorites)
+        val title = if (isFavorite) "Remove from favorites"
+        else "Add to favorites"
+
+        val message = if (isFavorite)
+            "This movie will be removed from your favorites."
+        else
+            "Do you want to save this movie to your favorites?"
+
+        val confirmColor = if (isFavorite) Color.Red else Color.Black
 
         AlertDialog(
-            title = { Text(dialogTitle) },
-            text = { Text(dialogText) },
             onDismissRequest = { showDialog = false },
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 6.dp,
+
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(if (isFavorite) R.drawable.ic_remove else R.drawable.ic_heart),
+                        contentDescription = "Save or delete from favorites",
+                        tint = confirmColor,
+                        modifier = Modifier.padding(end = 8.dp)
+                            .size(24.dp)
+                    )
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            },
+
+            text = {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+
             confirmButton = {
                 TextButton(
                     onClick = {
                         showDialog = false
                         if (isFavorite) onRemoveFavorite() else onAddFavorite()
-                    }) {
-                    Text(stringResource(R.string.confirm))
+                    }
+                ) {
+                    Text(
+                        text = "Confirm",
+                        color = confirmColor,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             },
+
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(R.string.dismiss))
+                    Text("Cancel")
                 }
             }
         )
@@ -212,6 +256,7 @@ fun FavoriteButton(
 @Preview(showBackground = true)
 @Composable
 fun DetailsViewPreview() {
+
     val sampleMovie = Movie(
         id = 1,
         title = "Inception",

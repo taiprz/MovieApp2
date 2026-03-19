@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MovieDAO {
 
-    // database queries
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movie: MovieEntity)
 

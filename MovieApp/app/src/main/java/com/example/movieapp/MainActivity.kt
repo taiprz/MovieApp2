@@ -80,7 +80,6 @@ fun SplashContent() {
     LaunchedEffect(Unit) {
         startAnimation = true
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()

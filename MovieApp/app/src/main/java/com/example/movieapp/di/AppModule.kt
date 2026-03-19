@@ -6,15 +6,6 @@ import com.example.movieapp.BuildConfig
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.MovieDB
-import com.example.movieapp.domain.repository.MovieListRepository
-import com.example.movieapp.domain.repository.MovieRepository
-import com.example.movieapp.domain.use_case.favorites.AddFavoriteUseCase
-import com.example.movieapp.domain.use_case.favorites.GetFavoritesUseCase
-import com.example.movieapp.domain.use_case.favorites.IsMovieFavoriteUseCase
-import com.example.movieapp.domain.use_case.favorites.RemoveFavoriteUseCase
-import com.example.movieapp.domain.use_case.movies.GetMovieDetailUseCase
-import com.example.movieapp.domain.use_case.movies.GetPopularUseCase
-import com.example.movieapp.domain.use_case.movies.SearchMovieUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +22,6 @@ import javax.inject.Singleton
 
 object AppModule {
     private const val BASE_URL = "https://api.themoviedb.org/3/"
-
     @Provides
     @Singleton
     fun providesInterceptor(): Interceptor {

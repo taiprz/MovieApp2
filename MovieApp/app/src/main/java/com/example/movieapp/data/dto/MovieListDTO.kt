@@ -1,7 +1,6 @@
-package com.example.movieapp.DTOs
+package com.example.movieapp.data.dto
 
 
-import com.example.movieapp.data.dto.MovieDTO
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 

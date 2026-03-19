@@ -1,121 +1,26 @@
 package com.example.movieapp.ui.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.movieapp.data.utils.Route
-import com.example.movieapp.data.utils.Route.Home
-import com.example.movieapp.ui.details.DetailViewModel
+import com.example.movieapp.data.utils.Route.*
 import com.example.movieapp.ui.favorites.FavoritesView
 import com.example.movieapp.ui.home.HomeView
 import com.example.movieapp.ui.search.SearchScreen
-import com.example.movieapp.R
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.movieapp.ui.details.DetailsView
-
-@Composable
-fun BottomBar(
-    hazeState: HazeState,
-    currentRoute: Route?,
-    onHomeClick: () -> Unit,
-    onFavoritesClick: () -> Unit,
-    onSearchClick: () -> Unit
-) {
-
-    fun iconColor(isSelected: Boolean): Color =
-        if (isSelected) Color.White.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.5f)
-
-    val isHomeSelected = currentRoute is Home
-    val isSearchSelected = currentRoute is Route.Search
-    val isFavSelected = currentRoute is Route.Favorites
-
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .fillMaxWidth()
-            .height(70.dp)
-            .hazeChild(
-                state = hazeState,
-                shape = CircleShape
-            )
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.05f),
-                        Color.White.copy(alpha = 0.02f)
-                    )
-                ),
-                shape = CircleShape
-            )
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.6f),
-                        Color.White.copy(alpha = 0.2f)
-                    )
-                ),
-                shape = CircleShape
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-
-            IconButton(onClick = onHomeClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_home),
-                    contentDescription = "Home",
-                    tint = iconColor(isHomeSelected),
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            IconButton(onClick = onSearchClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_magnifying_glass),
-                    contentDescription = "Search",
-                    tint = iconColor(isSearchSelected),
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            IconButton(onClick = onFavoritesClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_heart),
-                    contentDescription = "Favorites",
-                    tint = iconColor(isFavSelected),
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun MainScaffoldNavigation() {
@@ -140,7 +45,6 @@ fun MainScaffoldNavigation() {
                 )
             )
     ) {
-
         Scaffold(
             containerColor = Color.Transparent,
             bottomBar = {
@@ -148,8 +52,8 @@ fun MainScaffoldNavigation() {
                     hazeState = hazeState,
                     currentRoute = currentEntry as Route,
                     onHomeClick = { backStack.add(Home) },
-                    onFavoritesClick = { backStack.add(Route.Favorites) },
-                    onSearchClick = { backStack.add(Route.Search) }
+                    onFavoritesClick = { backStack.add(Favorites) },
+                    onSearchClick = { backStack.add(Search) }
                 )
             }
         ) { paddingValues ->
@@ -173,30 +77,24 @@ fun MainScaffoldNavigation() {
                         is Home -> NavEntry(key) {
                             HomeView(
                                 onMovieClick = {
-                                    backStack.add(Route.Details(it.id))
+                                    backStack.add(Details(it.id))
                                 })
                         }
 
-                        is Route.Details -> NavEntry(key) {
-                            val detailViewModel: DetailViewModel = hiltViewModel()
-
-                            LaunchedEffect(key.id) {
-                                detailViewModel.getMovie(key.id)
-                            }
-
-                            DetailsView(detailViewModel, backStack)
+                        is Details -> NavEntry(key) {
+                            DetailsView(backStack = backStack, movieID = key.id)
                         }
 
-                        is Route.Favorites -> NavEntry(key) {
+                        is Favorites -> NavEntry(key) {
                             FavoritesView(
-                                onMovieClick = { backStack.add(Route.Details(it.id)) },
+                                onMovieClick = { backStack.add(Details(it.id)) },
                                 onDiscoverClick = { backStack.add(Home) }
                             )
                         }
 
-                        is Route.Search -> NavEntry(key) {
+                        is Search -> NavEntry(key) {
                             SearchScreen(
-                                onMovieClick = { backStack.add(Route.Details(it.id)) },
+                                onMovieClick = { backStack.add(Details(it.id)) },
                             )
                         }
                         else -> NavEntry(key) {}
@@ -206,7 +104,6 @@ fun MainScaffoldNavigation() {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

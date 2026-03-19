@@ -36,4 +36,7 @@
     <string name="unavailable">Unavailable</string>
     <string name="popularity">Popularity</string>
     <string name="release_date">Release Date</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="favorites">Favorites</string>
 </resources>

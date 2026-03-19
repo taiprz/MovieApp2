@@ -7,7 +7,6 @@ import javax.inject.Inject
 class AddFavoriteUseCase @Inject constructor(
     private val movierepo: MovieRepository
 ) {
-
     suspend operator fun invoke(movie: Movie) {
         movierepo.addFavorite(movie)
     }

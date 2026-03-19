@@ -1,33 +1,12 @@
-package com.example.movieapp.data.utils
+package com.example.movieapp.data.mappers
 
+import com.example.movieapp.BuildConfig
+import com.example.movieapp.core.extensions.toDateFormatted
 import com.example.movieapp.data.dto.MovieDTO
 import com.example.movieapp.data.local.entities.MovieEntity
 import com.example.movieapp.domain.model.Movie
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlin.collections.emptyList
 import kotlin.text.split
-
-
-// CHANGES: Mapped ReleaseDate format to fit the country
-// Deleted unnecessary mapper (Dto to Entity)
-
-private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
-
-fun String?.toDateFormatted(): String {
-    if (this.isNullOrEmpty()) return ""
-
-
-    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val localDate = LocalDate.parse(this, inputFormatter)
-
-    val outputFormatter = DateTimeFormatter
-        .ofPattern("dd MMM yyyy")
-        .withLocale(Locale.getDefault())
-
-    return localDate.format(outputFormatter)
-}
 
 fun MovieEntity.toMovie(
     category: String
@@ -55,11 +34,11 @@ fun MovieDTO.toMovie(
 ): Movie {
     return Movie(
         adult = adult ?: false,
-        backdropPath = (BASE_IMAGE_URL + backdropPath) ?: "",
+        backdropPath = (BuildConfig.BASE_IMAGE_URL + backdropPath),
         originalLanguage = originalLanguage ?: "",
         overview = overview ?: "",
-        posterPath = (BASE_IMAGE_URL + posterPath),
-        releaseDate = releaseDate ?: "",
+        posterPath = (BuildConfig.BASE_IMAGE_URL + posterPath),
+        releaseDate = releaseDate.toDateFormatted(),
         title = title ?: "",
         voteAverage = voteAverage ?: 0.0,
         popularity = popularity ?: 0.0,
