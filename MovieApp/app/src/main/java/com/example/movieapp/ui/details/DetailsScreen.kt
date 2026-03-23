@@ -1,5 +1,8 @@
 package com.example.movieapp.ui.details
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
@@ -9,8 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,10 +27,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.rememberNavBackStack
 import coil.compose.AsyncImage
 import com.example.movieapp.R
-import com.example.movieapp.data.utils.Route.Home
+import com.example.movieapp.domain.model.Cast
+import com.example.movieapp.domain.model.Credits
+import com.example.movieapp.domain.model.Crew
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.ui.theme.Poppins
 
@@ -35,6 +42,8 @@ fun DetailsView(
     movieID: Int
 ) {
     val detailState by detailsvm.detailsState.collectAsStateWithLifecycle()
+    val creditsState by detailsvm.creditsState.collectAsStateWithLifecycle()
+    var showSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         detailsvm.getMovie(movieID)
@@ -47,19 +56,35 @@ fun DetailsView(
             isFavorite = isFavorite,
             onBackClick = { backStack.removeLastOrNull() },
             onAddFavorite = { detailsvm.addToFavorites(movie) },
-            onRemoveFavorite = { detailsvm.removeFavorite(movie) }
+            onRemoveFavorite = { detailsvm.removeFavorite(movie) },
+            onSeeCredits = {
+                detailsvm.getMovieCredits(movie.id)
+                showSheet = true
+            },
+            showSheet = showSheet,
+            onDismissSheet = { showSheet = false },
+            creditsState = creditsState
         )
     }
 }
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsViewContent(
     movie: Movie,
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onAddFavorite: () -> Unit,
-    onRemoveFavorite: () -> Unit
+    onRemoveFavorite: () -> Unit,
+    onSeeCredits: () -> Unit,
+    showSheet: Boolean,
+    onDismissSheet: () -> Unit,
+    creditsState: CreditsState
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -151,6 +176,193 @@ fun DetailsViewContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+
+            DetailsActionButtons(
+                movie = movie,
+                onSeeCredits = onSeeCredits,
+                onShare = { url ->
+                    Log.d("ShareButton", "Sharing URL: $url")
+                    Toast.makeText(context, "Sharing URL: $url", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+    }
+
+    if (showSheet) {
+        ModalBottomSheet(
+            onDismissRequest = onDismissSheet,
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+        ) {
+            creditsState.credits?.let { credits ->
+                CreditsContent(
+                    cast = credits.cast,
+                    crew = credits.crew
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+    ) {
+        if (cast.isNotEmpty()) {
+            Text(
+                text = "Cast",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                fontFamily = Poppins
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            cast.forEach { c ->
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(12.dp)
+                    ) {
+                        AsyncImage(
+                            model = c.profilePath,
+                            contentDescription = c.name,
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(RoundedCornerShape(50))
+                                .border(
+                                    2.dp,
+                                    Color.White.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(50)
+                                ),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(R.drawable.ic_no_image)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = c.name,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Poppins,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = "as ${c.character}",
+                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                                fontFamily = Poppins
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = Color.LightGray.copy(alpha = 0.3f), thickness = 1.dp)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        if (crew.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.crew),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                fontFamily = Poppins
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            crew.forEach { c ->
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(12.dp)
+                    ) {
+                        AsyncImage(
+                            model = c.profilePath,
+                            contentDescription = c.name,
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(RoundedCornerShape(50))
+                                .border(
+                                    2.dp,
+                                    Color.White.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(50)
+                                ),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(R.drawable.ic_no_image)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = c.name,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Poppins,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = c.job,
+                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                                fontFamily = Poppins
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun CreditsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Black.copy(alpha = 0.7f),
+            contentColor = Color.White
+        ),
+        border = ButtonDefaults.outlinedButtonBorder.copy(
+            brush = SolidColor(Color.White.copy(alpha = 0.3f))
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 2.dp
+        ),
+        modifier = modifier
+            .height(50.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_star),
+                contentDescription = null,
+                tint = Color(0xFFFFD700),
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.see_credits),
+                fontFamily = Poppins,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
@@ -189,15 +401,15 @@ fun FavoriteButton(
 
     if (showDialog) {
 
-        val title = if (isFavorite) "Remove from favorites"
-        else "Add to favorites"
+        val title = if (isFavorite) stringResource(R.string.remove_from_favorites)
+        else stringResource(R.string.add_to_favorites)
 
         val message = if (isFavorite)
-            "This movie will be removed from your favorites."
+            stringResource(R.string.this_movie_will_be_removed_from_your_favorites)
         else
-            "Do you want to save this movie to your favorites?"
+            stringResource(R.string.do_you_want_to_save_this_movie_to_your_favorites)
 
-        val confirmColor = if (isFavorite) Color.Red else Color.Black
+        val confirmColor = if (isFavorite) Color.Red else Color.Gray
 
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -209,9 +421,10 @@ fun FavoriteButton(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(if (isFavorite) R.drawable.ic_remove else R.drawable.ic_heart),
-                        contentDescription = "Save or delete from favorites",
+                        contentDescription = stringResource(R.string.save_or_delete_from_favorites),
                         tint = confirmColor,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier
+                            .padding(end = 8.dp)
                             .size(24.dp)
                     )
                     Text(
@@ -236,8 +449,7 @@ fun FavoriteButton(
                         if (isFavorite) onRemoveFavorite() else onAddFavorite()
                     }
                 ) {
-                    Text(
-                        text = "Confirm",
+                    Text(stringResource(R.string.confirm),
                         color = confirmColor,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -246,10 +458,71 @@ fun FavoriteButton(
 
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
+    }
+}
+
+@Composable
+fun DetailsActionButtons(
+    movie: Movie,
+    onSeeCredits: () -> Unit,
+    onShare: (String) -> Unit
+) {
+    val context = LocalContext.current
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        CreditsButton(
+            onClick = onSeeCredits,
+            modifier = Modifier.weight(1f)
+        )
+
+        Button(
+            onClick = {
+                Toast.makeText(context, "Sharing URL: ${movie.posterPath}", Toast.LENGTH_SHORT).show()
+                onShare(movie.posterPath)
+            },
+            shape = RoundedCornerShape(50),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black.copy(alpha = 0.75f),
+                contentColor = Color.White
+            ),
+            border = ButtonDefaults.outlinedButtonBorder.copy(
+                brush = SolidColor(Color.White.copy(alpha = 0.25f))
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 4.dp,
+                pressedElevation = 2.dp
+            ),
+            modifier = Modifier
+                .height(50.dp)
+                .weight(1f)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_share),
+                    contentDescription = "Share",
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Share",
+                    fontFamily = Poppins,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
     }
 }
 
@@ -275,11 +548,68 @@ fun DetailsViewPreview() {
         genreIds = listOf("28", "878", "12")
     )
 
+
+    val sampleCredits = Credits(
+        cast = listOf(
+            Cast(
+                adult = false,
+                castId = 1,
+                character = "Dom Cobb",
+                creditId = "52fe4532c3a368484e04df11",
+                gender = 2,
+                id = 6193,
+                knownForDepartment = "Acting",
+                name = "Leonardo DiCaprio",
+                order = 0,
+                originalName = "Leonardo DiCaprio",
+                popularity = 10.0,
+                profilePath = "/wo2hJpn04vbtmh0B9utCFdsQhxM.jpg"
+            ),
+            Cast(
+                adult = false,
+                castId = 2,
+                character = "Arthur",
+                creditId = "52fe4532c3a368484e04df15",
+                gender = 2,
+                id = 24045,
+                knownForDepartment = "Acting",
+                name = "Joseph Gordon-Levitt",
+                order = 1,
+                originalName = "Joseph Gordon-Levitt",
+                popularity = 8.0,
+                profilePath = "/4U9G4YwTlIEb7vDcpXvXknb6fQp.jpg"
+            )
+        ),
+        crew = listOf(
+            Crew(
+                adult = false,
+                creditId = "52fe4532c3a368484e04df25",
+                department = "Directing",
+                gender = 2,
+                id = 525,
+                job = "Director",
+                knownForDepartment = "Directing",
+                name = "Christopher Nolan",
+                originalName = "Christopher Nolan",
+                popularity = 9.0,
+                profilePath = "/cLH6q5fJ0XCMfKMX6FJ6ZtFw5Gp.jpg"
+            )
+        ),
+        id = 1
+    )
+
     DetailsViewContent(
         movie = sampleMovie,
         isFavorite = true,
         onBackClick = {},
         onAddFavorite = {},
-        onRemoveFavorite = {}
+        onRemoveFavorite = {},
+        onSeeCredits = {},
+        showSheet = false,
+        onDismissSheet = {},
+        creditsState = CreditsState(
+            credits = sampleCredits,
+            isLoading = false
+        )
     )
 }

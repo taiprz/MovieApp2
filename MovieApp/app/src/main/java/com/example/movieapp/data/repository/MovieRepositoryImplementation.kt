@@ -18,7 +18,6 @@ class MovieRepositoryImplementation @Inject constructor(
     private val movieDao: MovieDAO
 ) : MovieRepository {
 
-    // TODO: FIND BETTER IMPLEMENTATION
     override suspend fun getMovieByIdFromApi(id: Int): Flow<Result<Movie>> = flow {
         emit(Result.Loading(true))
         try {

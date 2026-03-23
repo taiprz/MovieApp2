@@ -39,4 +39,13 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="favorites">Favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="this_movie_will_be_removed_from_your_favorites">This movie will be removed from your favorites.</string>
+    <string name="do_you_want_to_save_this_movie_to_your_favorites">Do you want to save this movie to your favorites?</string>
+    <string name="save_or_delete_from_favorites">Save or delete from favorites</string>
+    <string name="cancel">Cancel</string>
+    <string name="see_credits">See Credits</string>
+    <string name="no_credits_available">No credits available</string>
+    <string name="cast">Cast</string>
+    <string name="crew">Crew</string>
 </resources>

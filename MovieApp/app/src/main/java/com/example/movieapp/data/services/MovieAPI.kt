@@ -1,5 +1,6 @@
 package com.example.movieapp.data.services
 
+import com.example.movieapp.data.dto.CreditsDTO
 import com.example.movieapp.data.dto.MovieDTO
 import com.example.movieapp.data.dto.MovieListDTO
 import retrofit2.http.GET
@@ -24,4 +25,9 @@ interface MovieAPI {
         @Query("query") title: String,
         @Query("page") page: Int
     ): MovieListDTO
+
+    @GET("movie/{id}/credits")
+    suspend fun getCredits(
+        @Path("id") movieId: Int
+    ): CreditsDTO
 }
