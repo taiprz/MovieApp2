@@ -1,11 +1,9 @@
 package com.example.movieapp.data.repository
 
 import com.example.movieapp.data.mappers.toCredit
-import com.example.movieapp.data.mappers.toMovie
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.Result
 import com.example.movieapp.domain.model.Credits
-import com.example.movieapp.domain.model.Crew
 import com.example.movieapp.domain.repository.CreditsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -1,7 +1,4 @@
 package com.example.movieapp.domain.model
-
-import com.google.gson.annotations.SerializedName
-
 data class Cast(
     val adult: Boolean,
     val castId: Int,

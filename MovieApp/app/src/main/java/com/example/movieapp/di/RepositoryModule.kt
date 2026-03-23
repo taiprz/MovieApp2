@@ -31,14 +31,5 @@ abstract class RepositoryModule {
         impl: CreditsRepositoryImplementation
     ): CreditsRepository
 
-//    @Binds
-//    abstract fun bindMovieRepository(
-//        impl: MovieRepositoryImplementation
-//    ): MovieRepository
-//
-//    @Binds
-//    abstract fun bindMovieRepository(
-//        impl: MovieRepositoryImplementation
-//    ): MovieRepository
 }
 

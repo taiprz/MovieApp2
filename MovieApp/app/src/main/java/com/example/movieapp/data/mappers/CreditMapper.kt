@@ -9,8 +9,8 @@ import com.example.movieapp.data.*
 
 fun CreditsDTO.toCredit(): Credits {
     return Credits(
-        cast = cast.mapNotNull { it?.toCast() } ?: emptyList(),
-        crew = crew.mapNotNull { it?.toCrew() } ?: emptyList(),
+        cast = cast?.mapNotNull { it?.toCast() } ?: emptyList(),
+        crew = crew?.mapNotNull { it?.toCrew() } ?: emptyList(),
         id = id ?: -1
     )
 }

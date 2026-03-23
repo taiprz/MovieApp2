@@ -4,7 +4,7 @@ import com.example.movieapp.domain.repository.MovieRepository
 import javax.inject.Inject
 
 class GetMovieDetailUseCase @Inject constructor(
-    private val movierepo: MovieRepository
+    private val movieRepo: MovieRepository
 ) {
-    suspend operator fun invoke(movieId: Int) = movierepo.getMovieByIdFromApi(movieId)
+    suspend operator fun invoke(movieId: Int) = movieRepo.getMovieByIdFromApi(movieId)
 }

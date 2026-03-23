@@ -4,7 +4,7 @@ import com.example.movieapp.domain.repository.MovieListRepository
 import javax.inject.Inject
 
 class GetNowPlayingUseCase @Inject constructor(
-    private val movierepo : MovieListRepository
-){
-    operator fun invoke() = movierepo.getNowPlaying()
+    private val movieRepo: MovieListRepository
+) {
+    operator fun invoke() = movieRepo.getNowPlaying()
 }

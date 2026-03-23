@@ -47,7 +47,7 @@ fun MovieDTO.toMovie(
         id = id ?: -1,
         originalTitle = originalTitle ?: "",
         category = category,
-        genreIds = genreIds?.map { it.toString() } ?: emptyList()
+        genreIds = genreIds?.mapNotNull {it.toString() } ?: emptyList()
     )
 }
 

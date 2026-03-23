@@ -46,7 +46,6 @@ object AppModule {
             .build()
     }
 
-    // api connection
     @Provides
     @Singleton
     fun providesMovieApi(client: OkHttpClient): MovieAPI {
@@ -58,7 +57,6 @@ object AppModule {
             .create(MovieAPI::class.java)
     }
 
-    // db connection
     @Provides
     @Singleton
     fun providesMovieDB(app: Application): MovieDB {
@@ -69,7 +67,6 @@ object AppModule {
         ).build()
     }
 
-    // db results
     @Provides
     @Singleton
     fun provideMovieDAO(database: MovieDB): MovieDAO {

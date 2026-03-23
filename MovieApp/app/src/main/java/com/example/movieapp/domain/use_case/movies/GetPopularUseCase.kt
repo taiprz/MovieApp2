@@ -4,7 +4,7 @@ import com.example.movieapp.domain.repository.MovieListRepository
 import javax.inject.Inject
 
 class GetPopularUseCase @Inject constructor(
-    private val movierepo : MovieListRepository
+    private val movieRepo : MovieListRepository
 ){
-    operator fun invoke() = movierepo.getPopularMovies()
+    operator fun invoke() = movieRepo.getPopularMovies()
 }

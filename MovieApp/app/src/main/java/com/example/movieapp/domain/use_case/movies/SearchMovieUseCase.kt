@@ -4,7 +4,7 @@ import com.example.movieapp.domain.repository.MovieListRepository
 import javax.inject.Inject
 
 class SearchMovieUseCase @Inject constructor(
-    private val movierepo: MovieListRepository
+    private val movieRepo: MovieListRepository
 ) {
-    operator fun invoke(title: String) = movierepo.searchMoviesPaged(title)
+    operator fun invoke(title: String) = movieRepo.searchMoviesPaged(title)
 }

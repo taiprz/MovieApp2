@@ -1,10 +1,12 @@
 package com.example.movieapp.ui.details
 
-import android.util.Log
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -67,8 +69,6 @@ fun DetailsView(
         )
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,13 +176,18 @@ fun DetailsViewContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             DetailsActionButtons(
                 movie = movie,
                 onSeeCredits = onSeeCredits,
-                onShare = { url ->
-                    Log.d("ShareButton", "Sharing URL: $url")
-                    Toast.makeText(context, "Sharing URL: $url", Toast.LENGTH_SHORT).show()
+                onShare = { text ->
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, text)
+                    }
+
+                    val chooser = Intent.createChooser(intent, "Share via")
+                    context.startActivity(chooser)
+
                 }
             )
         }
@@ -206,21 +211,24 @@ fun DetailsViewContent(
 
 @Composable
 fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (cast.isNotEmpty()) {
-            Text(
-                text = "Cast",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                fontFamily = Poppins
-            )
-            Spacer(modifier = Modifier.height(8.dp))
 
-            cast.forEach { c ->
+        if (cast.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Cast",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    fontFamily = Poppins
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            items(cast) { c ->
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -230,8 +238,7 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(12.dp)
+                        modifier = Modifier.padding(12.dp)
                     ) {
                         AsyncImage(
                             model = c.profilePath,
@@ -265,20 +272,24 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Divider(color = Color.LightGray.copy(alpha = 0.3f), thickness = 1.dp)
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider(color = Color.LightGray.copy(alpha = 0.3f), thickness = 1.dp)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
 
         if (crew.isNotEmpty()) {
-            Text(
-                text = stringResource(R.string.crew),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                fontFamily = Poppins
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            item {
+                Text(
+                    text = stringResource(R.string.crew),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    fontFamily = Poppins
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
-            crew.forEach { c ->
+            items(crew) { c ->
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -288,8 +299,7 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(12.dp)
+                        modifier = Modifier.padding(12.dp)
                     ) {
                         AsyncImage(
                             model = c.profilePath,
@@ -323,8 +333,6 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -449,7 +457,8 @@ fun FavoriteButton(
                         if (isFavorite) onRemoveFavorite() else onAddFavorite()
                     }
                 ) {
-                    Text(stringResource(R.string.confirm),
+                    Text(
+                        stringResource(R.string.confirm),
                         color = confirmColor,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -486,7 +495,8 @@ fun DetailsActionButtons(
 
         Button(
             onClick = {
-                Toast.makeText(context, "Sharing URL: ${movie.posterPath}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Sharing URL: ${movie.posterPath}", Toast.LENGTH_SHORT)
+                    .show()
                 onShare(movie.posterPath)
             },
             shape = RoundedCornerShape(50),
@@ -547,7 +557,6 @@ fun DetailsViewPreview() {
         category = "Popular",
         genreIds = listOf("28", "878", "12")
     )
-
 
     val sampleCredits = Credits(
         cast = listOf(

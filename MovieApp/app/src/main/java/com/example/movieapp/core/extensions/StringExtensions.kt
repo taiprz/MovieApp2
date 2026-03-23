@@ -7,7 +7,6 @@ import java.util.Locale
 fun String?.toDateFormatted(): String {
     if (this.isNullOrEmpty()) return ""
 
-
     val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val localDate = LocalDate.parse(this, inputFormatter)
 
