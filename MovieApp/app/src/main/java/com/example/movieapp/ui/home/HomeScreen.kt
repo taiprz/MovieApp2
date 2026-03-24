@@ -165,7 +165,7 @@ fun HomeScreenPreview() {
             video = false,
             voteAverage = 8.3,
             voteCount = 22186,
-            genreIds = listOf("28", "878", "12"),
+            genreIds = listOf(28, 878, 12),
             releaseDate = "2010-07-16",
             category = "Popular"
         )

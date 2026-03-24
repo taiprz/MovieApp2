@@ -4,6 +4,7 @@ import com.example.movieapp.BuildConfig
 import com.example.movieapp.core.extensions.toDateFormatted
 import com.example.movieapp.data.dto.MovieDTO
 import com.example.movieapp.data.local.entities.MovieEntity
+import com.example.movieapp.domain.model.Genre
 import com.example.movieapp.domain.model.Movie
 import kotlin.collections.emptyList
 import kotlin.text.split
@@ -26,7 +27,8 @@ fun MovieEntity.toMovie(
         id = id,
         originalTitle = originalTitle,
         category = category,
-        genreIds = genreIds.split(",").filter { it.isNotEmpty() })
+        genreIds = genreIds.split(",").map { it.toInt() }
+    )
 }
 
 fun MovieDTO.toMovie(
@@ -47,7 +49,7 @@ fun MovieDTO.toMovie(
         id = id ?: -1,
         originalTitle = originalTitle ?: "",
         category = category,
-        genreIds = genreIds?.mapNotNull {it.toString() } ?: emptyList()
+        genreIds = genreIds.orEmpty().mapNotNull { it }
     )
 }
 
@@ -71,6 +73,11 @@ fun Movie.toMovieEntity(
         category = category,
         genreIds = genreIds.joinToString(",")
     )
+}
+
+fun Movie.mapGenres(genres: List<Genre>): List<Genre> {
+    val genreMap = genres.associateBy { it.id }
+    return genreIds.mapNotNull { genreMap[it] }
 }
 
 

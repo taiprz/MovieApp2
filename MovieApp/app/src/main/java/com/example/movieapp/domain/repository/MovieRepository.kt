@@ -2,6 +2,7 @@ package com.example.movieapp.domain.repository
 
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.data.utils.Result
+import com.example.movieapp.domain.model.Genre
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
@@ -14,6 +15,5 @@ interface MovieRepository {
 
     suspend fun removeFavorite(movieId: Int)
 
-
-
+    suspend fun getGenres() : List<Genre>
 }

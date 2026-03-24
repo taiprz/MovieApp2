@@ -256,7 +256,7 @@ fun NoMatches() {
                 video = false,
                 voteAverage = 8.0,
                 voteCount = 1000,
-                genreIds = listOf("28"),
+                genreIds = listOf(28),
                 releaseDate = "2020-01-01",
                 category = "Popular"
             )

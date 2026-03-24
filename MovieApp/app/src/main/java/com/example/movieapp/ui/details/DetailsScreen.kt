@@ -163,6 +163,10 @@ fun DetailsViewContent(
                 }
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            GenresDisplay(movie)
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
@@ -228,7 +232,7 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            items(cast) { c ->
+            items(cast) { cast ->
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -241,8 +245,8 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                         modifier = Modifier.padding(12.dp)
                     ) {
                         AsyncImage(
-                            model = c.profilePath,
-                            contentDescription = c.name,
+                            model = cast.profilePath,
+                            contentDescription = cast.name,
                             modifier = Modifier
                                 .size(60.dp)
                                 .clip(RoundedCornerShape(50))
@@ -257,13 +261,13 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = c.name,
+                                text = cast.name,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = Poppins,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "as ${c.character}",
+                                text = "as ${cast.character}",
                                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
                                 fontFamily = Poppins
                             )
@@ -289,7 +293,7 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            items(crew) { c ->
+            items(crew) { crew ->
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -302,8 +306,8 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                         modifier = Modifier.padding(12.dp)
                     ) {
                         AsyncImage(
-                            model = c.profilePath,
-                            contentDescription = c.name,
+                            model = crew.profilePath,
+                            contentDescription = crew.name,
                             modifier = Modifier
                                 .size(60.dp)
                                 .clip(RoundedCornerShape(50))
@@ -318,13 +322,13 @@ fun CreditsContent(cast: List<Cast>, crew: List<Crew>) {
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = c.name,
+                                text = crew.name,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = Poppins,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = c.job,
+                                text = crew.job,
                                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
                                 fontFamily = Poppins
                             )
@@ -475,6 +479,17 @@ fun FavoriteButton(
 }
 
 @Composable
+fun GenresDisplay(movie: Movie) {
+    Row(modifier = Modifier
+        .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly) {
+            Text("")
+            Text("Action")
+            Text("Action")
+        }
+}
+
+@Composable
 fun DetailsActionButtons(
     movie: Movie,
     onSeeCredits: () -> Unit,
@@ -495,9 +510,8 @@ fun DetailsActionButtons(
 
         Button(
             onClick = {
-                Toast.makeText(context, "Sharing URL: ${movie.posterPath}", Toast.LENGTH_SHORT)
-                    .show()
-                onShare(movie.posterPath)
+                val movieUrl = "https://www.themoviedb.org/movie/${movie.id}"
+                onShare(movieUrl)
             },
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(
@@ -555,7 +569,7 @@ fun DetailsViewPreview() {
         voteCount = 22186,
         video = false,
         category = "Popular",
-        genreIds = listOf("28", "878", "12")
+        genreIds = listOf(28, 878, 12)
     )
 
     val sampleCredits = Credits(

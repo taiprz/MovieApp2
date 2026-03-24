@@ -1,6 +1,7 @@
 package com.example.movieapp.data.services
 
 import com.example.movieapp.data.dto.CreditsDTO
+import com.example.movieapp.data.dto.GenresDTO
 import com.example.movieapp.data.dto.MovieDTO
 import com.example.movieapp.data.dto.MovieListDTO
 import retrofit2.http.GET
@@ -30,4 +31,7 @@ interface MovieAPI {
     suspend fun getCredits(
         @Path("id") movieId: Int
     ): CreditsDTO
+
+    @GET("movie/movie/list")
+    suspend fun getGenres(): GenresDTO
 }

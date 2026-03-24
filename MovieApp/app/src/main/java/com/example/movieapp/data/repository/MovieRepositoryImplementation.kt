@@ -1,11 +1,15 @@
 package com.example.movieapp.data.repository
 
 import com.example.movieapp.DAO.MovieDAO
+import com.example.movieapp.data.mappers.mapGenres
+import com.example.movieapp.data.mappers.toGenreList
+import com.example.movieapp.data.mappers.toGenres
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.Category
 import com.example.movieapp.data.mappers.toMovie
 import com.example.movieapp.data.mappers.toMovieEntity
 import com.example.movieapp.data.utils.Result
+import com.example.movieapp.domain.model.Genre
 import com.example.movieapp.domain.model.Movie
 import com.example.movieapp.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
@@ -45,4 +49,7 @@ class MovieRepositoryImplementation @Inject constructor(
         movieDao.deleteById(movieId)
     }
 
+    override suspend fun getGenres() : List<Genre> {
+      return movieAPI.getGenres().genres.toGenres()
+    }
 }
