@@ -82,7 +82,7 @@ fun Header(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        FontFormat(stringResource(R.string.your_favorites))
+        FontFormat(stringResource(R.string.your_favorites),)
 
         if (movies.isNotEmpty()) {
             EditButton(editMode, onEditClick)

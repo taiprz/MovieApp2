@@ -2,7 +2,6 @@ package com.example.movieapp.data.repository
 
 import com.example.movieapp.DAO.MovieDAO
 import com.example.movieapp.data.mappers.mapGenres
-import com.example.movieapp.data.mappers.toGenreList
 import com.example.movieapp.data.mappers.toGenres
 import com.example.movieapp.data.services.MovieAPI
 import com.example.movieapp.data.utils.Category

@@ -507,7 +507,6 @@ fun DetailsActionButtons(
             onClick = onSeeCredits,
             modifier = Modifier.weight(1f)
         )
-
         Button(
             onClick = {
                 val movieUrl = "https://www.themoviedb.org/movie/${movie.id}"

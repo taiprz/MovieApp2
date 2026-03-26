@@ -73,3 +73,4 @@ object AppModule {
         return database.movieDao
     }
 }
+

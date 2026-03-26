@@ -21,11 +21,12 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.movieapp.ui.details.DetailsView
+import com.example.movieapp.ui.login.LoginView
 
 @Composable
 fun MainScaffoldNavigation() {
 
-    val backStack = rememberNavBackStack(Home)
+    val backStack = rememberNavBackStack(Login)
     val hazeState = remember { HazeState() }
 
     val currentEntry = backStack.lastOrNull()
@@ -73,6 +74,11 @@ fun MainScaffoldNavigation() {
                 entryProvider = { key ->
 
                     when (key) {
+
+                        is Login -> NavEntry(key) {
+                            LoginView()
+                        }
+
 
                         is Home -> NavEntry(key) {
                             HomeView(

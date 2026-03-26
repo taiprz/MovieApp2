@@ -1,10 +1,12 @@
 package com.example.movieapp.di
 
+import com.example.movieapp.data.repository.AuthRepositoryImpl
 import com.example.movieapp.data.repository.CreditsRepositoryImplementation
 import com.example.movieapp.domain.repository.MovieRepository
 import com.example.movieapp.data.repository.MovieRepositoryImplementation
 import com.example.movieapp.domain.repository.MovieListRepository
 import com.example.movieapp.data.repository.MovieListRepositoryImplementation
+import com.example.movieapp.domain.repository.AuthRepository
 import com.example.movieapp.domain.repository.CreditsRepository
 import dagger.Binds
 import dagger.Module
@@ -30,6 +32,12 @@ abstract class RepositoryModule {
     abstract fun bindCreditsRepository(
         impl: CreditsRepositoryImplementation
     ): CreditsRepository
+
+    @Binds
+    abstract fun bindAuthRepository(
+        impl: AuthRepositoryImpl
+    ): AuthRepository
+
 
 }
 

@@ -15,7 +15,9 @@ import com.example.movieapp.R
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        FontFormat(stringResource(R.string.movi3_arch1ve))
+        FontFormat(
+            stringResource(R.string.movi3_arch1ve)
+        )
     }
 }
 

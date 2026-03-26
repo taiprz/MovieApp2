@@ -107,7 +107,7 @@ fun MovieSection(
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FontFormat(title)
+        FontFormat(title,)
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             painter = painterResource(iconRes),
